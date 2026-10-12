@@ -1,0 +1,10 @@
+import { getConfig } from './shared/config.js';
+import { createPool } from './database/pool.js';
+import { buildApp } from './app.js';
+const config = getConfig();
+const db = createPool(config.DATABASE_URL);
+const app = await buildApp(db, config);
+app.addHook('onClose', async () => db.end());
+for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => void app.close());
+await app.listen({ port: config.PORT, host: config.HOST });
+console.log(`ImobiTech API disponível na porta ${config.PORT}.`);
