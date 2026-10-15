@@ -1,0 +1,5 @@
+Executado em 2026-10-15T20:56:19.618Z
+PASS HTTP redireciona para HTTPS com 308
+PASS TLS com CA local confiável, HSTS e CSP; validação de certificado habilitada
+PASS login HTTPS e cookie Secure/HttpOnly/SameSite=Strict/Cache-Control no-store
+PASS logout HTTPS revoga sessão

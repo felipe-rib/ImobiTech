@@ -1,0 +1,144 @@
+
+> imobitech@0.1.0 test
+> npm run test -w backend
+
+
+> @imobitech/backend@0.1.0 test
+> tsx --test test/*.test.ts
+
+TAP version 13
+# Subtest: T1.01 / T1.02: quatro perfis autenticam e recebem somente dados públicos
+ok 1 - T1.01 / T1.02: quatro perfis autenticam e recebem somente dados públicos
+  ---
+  duration_ms: 985.1114
+  type: 'test'
+  ...
+# Subtest: T1.03 / T1.04: credenciais inválidas e inativo retornam erro genérico idêntico
+ok 2 - T1.03 / T1.04: credenciais inválidas e inativo retornam erro genérico idêntico
+  ---
+  duration_ms: 195.5983
+  type: 'test'
+  ...
+# Subtest: T1.05: administrador cadastra usuário e persiste no PostgreSQL
+ok 3 - T1.05: administrador cadastra usuário e persiste no PostgreSQL
+  ---
+  duration_ms: 67.7717
+  type: 'test'
+  ...
+# Subtest: T1.06 / T1.07: atualização e perfil persistem; sessão anterior é revogada
+ok 4 - T1.06 / T1.07: atualização e perfil persistem; sessão anterior é revogada
+  ---
+  duration_ms: 116.6369
+  type: 'test'
+  ...
+# Subtest: T1.08 / T1.15: rotas protegidas retornam 401 e perfis sem permissão recebem 403
+ok 5 - T1.08 / T1.15: rotas protegidas retornam 401 e perfis sem permissão recebem 403
+  ---
+  duration_ms: 28.9686
+  type: 'test'
+  ...
+# Subtest: T1.09: e-mail e identificador únicos; perfil inválido e campos extras rejeitados
+ok 6 - T1.09: e-mail e identificador únicos; perfil inválido e campos extras rejeitados
+  ---
+  duration_ms: 351.4684
+  type: 'test'
+  ...
+# Subtest: T1.10 / T1.13: corretor cria imóvel com situação Disponível e vínculo real
+ok 7 - T1.10 / T1.13: corretor cria imóvel com situação Disponível e vínculo real
+  ---
+  duration_ms: 21.4404
+  type: 'test'
+  ...
+# Subtest: T1.11: alteração do imóvel persiste e aparece na consulta
+ok 8 - T1.11: alteração do imóvel persiste e aparece na consulta
+  ---
+  duration_ms: 12.2283
+  type: 'test'
+  ...
+# Subtest: T1.12: proprietário obrigatório, existente, ativo e com perfil correto
+ok 9 - T1.12: proprietário obrigatório, existente, ativo e com perfil correto
+  ---
+  duration_ms: 22.6595
+  type: 'test'
+  ...
+# Subtest: T1.16: proprietário consulta somente seus imóveis e não pode editá-los
+ok 10 - T1.16: proprietário consulta somente seus imóveis e não pode editá-los
+  ---
+  duration_ms: 30.2206
+  type: 'test'
+  ...
+# Subtest: T1.17: Argon2id no banco; hashes ausentes em todas as respostas de usuários
+ok 11 - T1.17: Argon2id no banco; hashes ausentes em todas as respostas de usuários
+  ---
+  duration_ms: 73.4197
+  type: 'test'
+  ...
+# Subtest: Filtros, paginação, validação e consultas parametrizadas
+ok 12 - Filtros, paginação, validação e consultas parametrizadas
+  ---
+  duration_ms: 12.4618
+  type: 'test'
+  ...
+# Subtest: CSRF: rejeita origem externa e ausente em mutações
+ok 13 - CSRF: rejeita origem externa e ausente em mutações
+  ---
+  duration_ms: 1.2155
+  type: 'test'
+  ...
+# Subtest: Último administrador é preservado; desativação invalida sessão
+ok 14 - Último administrador é preservado; desativação invalida sessão
+  ---
+  duration_ms: 14.5265
+  type: 'test'
+  ...
+# Subtest: T1.14 parcial: cookie Secure em produção e cabeçalhos de proteção
+ok 15 - T1.14 parcial: cookie Secure em produção e cabeçalhos de proteção
+  ---
+  duration_ms: 79.5963
+  type: 'test'
+  ...
+# Subtest: Validação de campos, proprietário inativo e integridade no banco
+ok 16 - Validação de campos, proprietário inativo e integridade no banco
+  ---
+  duration_ms: 14.0892
+  type: 'test'
+  ...
+# Subtest: Expiração e logout invalidam a sessão no servidor
+ok 17 - Expiração e logout invalidam a sessão no servidor
+  ---
+  duration_ms: 86.0102
+  type: 'test'
+  ...
+# Subtest: Limite de tentativas de autenticação
+ok 18 - Limite de tentativas de autenticação
+  ---
+  duration_ms: 96.7941
+  type: 'test'
+  ...
+# Subtest: PATCH não reativa usuário nem altera campos omitidos
+ok 19 - PATCH não reativa usuário nem altera campos omitidos
+  ---
+  duration_ms: 4.9219
+  type: 'test'
+  ...
+# Subtest: Cadastro exige senha forte em tamanho e perfil único
+ok 20 - Cadastro exige senha forte em tamanho e perfil único
+  ---
+  duration_ms: 1.8474
+  type: 'test'
+  ...
+# Subtest: Imóvel não aceita situação inicial enviada pelo cliente
+ok 21 - Imóvel não aceita situação inicial enviada pelo cliente
+  ---
+  duration_ms: 1.2417
+  type: 'test'
+  ...
+1..21
+# tests 21
+# suites 0
+# pass 21
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3323.5601

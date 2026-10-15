@@ -1,0 +1,21 @@
+
+> imobitech@0.1.0 build
+> npm run build --workspaces
+
+
+> @imobitech/backend@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @imobitech/frontend@0.1.0 build
+> tsc -b && vite build
+
+vite v7.3.7 building client environment for production...
+transforming...
+✓ 1601 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.43 kB │ gzip:  0.30 kB
+dist/assets/index-BoK1J9qH.css   17.07 kB │ gzip:  4.88 kB
+dist/assets/index-tvvX5e06.js   291.02 kB │ gzip: 91.61 kB
+✓ built in 4.79s
