@@ -1,0 +1,46 @@
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-imobitech}
+      POSTGRES_USER: ${POSTGRES_USER:-imobitech}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Defina POSTGRES_PASSWORD no .env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  api:
+    build:
+      context: .
+      dockerfile: deploy/api.Dockerfile
+    environment:
+      DATABASE_URL: ${DATABASE_URL:?Defina DATABASE_URL com host db para Docker}
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: 3000
+      APP_ORIGIN: ${APP_ORIGIN:-https://localhost}
+      SESSION_HOURS: ${SESSION_HOURS:-8}
+      ADMIN_NAME: ${ADMIN_NAME:-Administrador}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+    depends_on:
+      db:
+        condition: service_healthy
+  web:
+    build:
+      context: .
+      dockerfile: deploy/web.Dockerfile
+    environment:
+      APP_DOMAIN: ${APP_DOMAIN:-localhost}
+    ports: ['127.0.0.1:80:80', '127.0.0.1:443:443']
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on: [api]
+volumes:
+  pgdata:
+  caddy_data:
+  caddy_config:

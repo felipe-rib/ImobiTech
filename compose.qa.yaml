@@ -1,0 +1,13 @@
+services:
+  browser-tests:
+    image: mcr.microsoft.com/playwright:v1.64.1-noble
+    profiles: [test]
+    network_mode: service:web
+    working_dir: /work
+    volumes:
+      - .:/work
+      - caddy_data:/caddy:ro
+    environment:
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+    entrypoint: [bash, scripts/browser-tests.sh]
