@@ -9,6 +9,9 @@ import { HttpError } from './shared/domain.js';
 import { authController } from './auth/controller.js';
 import { usersController } from './users/controller.js';
 import { propertiesController } from './properties/controller.js';
+import { contractsController } from './contracts/controller.js';
+import { visitsController } from './visits/controller.js';
+import { paymentsController } from './payments/controller.js';
 export async function buildApp(db: Pool, config: Config) {
   // Production API is reachable only through the single reverse proxy (no published API port).
   const app = Fastify({
@@ -31,33 +34,43 @@ export async function buildApp(db: Pool, config: Config) {
   });
   app.setErrorHandler((error, req, reply) => {
     if (error instanceof ZodError)
-      return reply
-        .code(400)
-        .send({
-          message: 'Revise os campos informados.',
-          fields: error.issues.map((i) => ({ field: i.path.join('.'), message: i.message })),
-        });
+      return reply.code(400).send({
+        message: 'Revise os campos informados.',
+        fields: error.issues.map((i) => ({ field: i.path.join('.'), message: i.message })),
+      });
     if (error instanceof HttpError)
       return reply.code(error.statusCode).send({ message: error.message });
-    const e = error as { code?: string; statusCode?: number };
-    if (e.code === '23505')
-      return reply.code(409).send({ message: 'E-mail ou identificação já cadastrados.' });
-    if (e.code === '23514' || e.code === '23503')
+    const e = error as { code?: string; statusCode?: number; constraint?: string };
+    if (e.code === '23P01')
       return reply
         .code(409)
         .send({
-          message:
-            'A alteração viola um vínculo ou regra do cadastro. Proprietários com imóveis devem manter esse perfil.',
+          message: 'Conflito de horário: o imóvel ou corretor já possui visita nesse período.',
         });
-    if (e.statusCode && e.statusCode < 500)
+    if (e.code === '40P01' || e.code === '40001')
       return reply
-        .code(e.statusCode)
-        .send({
-          message:
-            e.statusCode === 429
-              ? 'Muitas tentativas. Aguarde e tente novamente.'
-              : 'Requisição inválida.',
-        });
+        .code(409)
+        .send({ message: 'Outro usuário alterou estes dados. Atualize e tente novamente.' });
+    if (e.code === '23505' && e.constraint === 'payments_one_per_competence')
+      return reply
+        .code(409)
+        .send({ message: 'Este contrato já possui lançamento para a competência informada.' });
+    if (e.code === '23505' && e.constraint === 'contracts_one_active_per_property')
+      return reply.code(409).send({ message: 'O imóvel já possui contrato ativo.' });
+    if (e.code === '23505')
+      return reply.code(409).send({ message: 'E-mail ou identificação já cadastrados.' });
+    if (e.code === '23514' || e.code === '23503')
+      return reply.code(409).send({
+        message:
+          'A alteração viola uma regra de integridade: confira vínculos, disponibilidade, períodos e registros históricos.',
+      });
+    if (e.statusCode && e.statusCode < 500)
+      return reply.code(e.statusCode).send({
+        message:
+          e.statusCode === 429
+            ? 'Muitas tentativas. Aguarde e tente novamente.'
+            : 'Requisição inválida.',
+      });
     // Do not log SQL, request payloads, cookies or personal data.
     console.error(
       JSON.stringify({ event: 'request_failed', requestId: req.id, code: e.code ?? 'INTERNAL' }),
@@ -73,5 +86,8 @@ export async function buildApp(db: Pool, config: Config) {
   authController(app, db, config);
   usersController(app, db);
   propertiesController(app, db);
+  contractsController(app, db);
+  visitsController(app, db);
+  paymentsController(app, db);
   return app;
 }

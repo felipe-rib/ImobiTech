@@ -1,5 +1,6 @@
 services:
   db:
+    restart: unless-stopped
     image: postgres:17-alpine
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-imobitech}
@@ -13,6 +14,7 @@ services:
       timeout: 5s
       retries: 10
   api:
+    restart: unless-stopped
     build:
       context: .
       dockerfile: deploy/api.Dockerfile
@@ -30,6 +32,7 @@ services:
       db:
         condition: service_healthy
   web:
+    restart: unless-stopped
     build:
       context: .
       dockerfile: deploy/web.Dockerfile
@@ -40,7 +43,24 @@ services:
       - caddy_data:/data
       - caddy_config:/config
     depends_on: [api]
+  backup:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      PGHOST: db
+      PGUSER: ${POSTGRES_USER:-imobitech}
+      PGDATABASE: ${POSTGRES_DB:-imobitech}
+      PGPASSWORD: ${POSTGRES_PASSWORD:?Defina POSTGRES_PASSWORD}
+    volumes:
+      - backups:/backups
+      - ./scripts/backup.sh:/scripts/backup.sh:ro
+      - ./scripts/verify-backup.sh:/scripts/verify-backup.sh:ro
+    entrypoint: [sh, /scripts/backup.sh]
+    depends_on:
+      db:
+        condition: service_healthy
 volumes:
+  backups:
   pgdata:
   caddy_data:
   caddy_config:

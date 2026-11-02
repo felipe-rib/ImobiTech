@@ -1,4 +1,4 @@
-# Como executar e avaliar o ImobiTech v0.1
+# Como executar e avaliar o ImobiTech — entrega US01–US07
 
 Professor(a), esta entrega é executada **localmente**. Não é necessário contratar hospedagem, criar conta em serviços de nuvem ou usar o banco dos alunos. O repositório contém frontend, API, banco versionado, testes e instruções de instalação.
 
@@ -41,7 +41,7 @@ docker compose --env-file .env.docker -p imobitech-professor build
 docker compose --env-file .env.docker -p imobitech-professor up -d db
 docker compose --env-file .env.docker -p imobitech-professor run --rm api node backend/dist/database/migrate.js
 docker compose --env-file .env.docker -p imobitech-professor run --rm api node backend/dist/database/admin.js
-docker compose --env-file .env.docker -p imobitech-professor up -d api web
+docker compose --env-file .env.docker -p imobitech-professor up -d api web backup
 ```
 
 Resultados esperados: `Migrations aplicadas.`, `Administrador inicial cadastrado.` e containers iniciados. Verifique:
@@ -50,7 +50,7 @@ Resultados esperados: `Migrations aplicadas.`, `Administrador inicial cadastrado
 docker compose --env-file .env.docker -p imobitech-professor ps
 ```
 
-Os containers `db`, `api` e `web` devem estar ativos. Na primeira execução, o download e o build podem levar alguns minutos.
+Os containers `db`, `api`, `web` e `backup` devem estar ativos. Na primeira execução, o download e o build podem levar alguns minutos.
 
 ## 4. Confiar no certificado local e abrir a aplicação
 
@@ -83,7 +83,41 @@ Em macOS/Linux, importe `imobitech-local-ca.crt` no armazenamento de confiança 
 10. Como administrador, desative um usuário e tente entrar com ele: o acesso deve ser negado.
 11. Reduza a janela ou use o modo responsivo do navegador. O menu se adapta ao celular; a tabela de usuários tem rolagem interna quando necessário.
 
-Não existem módulos de visitas, contratos ou pagamentos nesta versão, conforme o escopo. O sistema não contém imóveis pré-carregados: os cadastros feitos na avaliação são salvos no PostgreSQL.
+12. Como corretor, acesse **Visitas → Agendar visita**, escolha o imóvel disponível, informe participante e um intervalo futuro. Confirme e cancele a visita pela agenda. Tente cadastrar horários sobrepostos: o sistema deve impedir conflito para o mesmo imóvel ou corretor.
+13. Como administrador, acesse **Contratos → Novo contrato**, selecione imóvel e inquilino, informe vigência, valor mensal e dia do vencimento. O proprietário vem do imóvel. Ao salvar, o imóvel fica indisponível para outro contrato ativo.
+14. No contrato, abra **Consultar financeiro → Novo lançamento**. Registre competência dentro da vigência, valor e vencimento. Deixe a data de pagamento vazia para observar Pendente ou Atrasado; depois atualize o lançamento com uma data de pagamento válida para observar Pago.
+15. Entre como proprietário e inquilino: ambos consultam apenas seus próprios contratos e lançamentos, sem botões de alteração. O corretor não acessa o financeiro.
+16. Como administrador, abra o **Histórico de alterações** do contrato e confira autor e horário. Encerre o contrato e confirme que o imóvel volta a ficar disponível; os pagamentos permanecem consultáveis.
+
+A entrega segue o DRS e a Arquitetura, conforme [decisão de escopo](docs/ESCOPO_MVP.md). Não há dados pessoais ou imóveis pré-carregados. Use cadastros fictícios. Os pagamentos são registros manuais, sem integração bancária.
+
+## Backup diário e restauração de verificação
+
+O serviço `backup` gera um dump ao iniciar e a cada 24 horas enquanto o Docker estiver funcionando. Os arquivos ficam no volume `backups`, separados do volume do banco. Computador desligado não executa tarefas; ao reiniciar, um novo backup é gerado. Verifique:
+
+```powershell
+docker compose --env-file .env.docker -p imobitech-professor logs backup
+docker compose --env-file .env.docker -p imobitech-professor exec backup ls -l /backups
+```
+
+Substitua o nome abaixo pelo arquivo listado para verificar a recuperação em um banco temporário, removido ao final. O banco principal não é sobrescrito:
+
+```powershell
+docker compose --env-file .env.docker -p imobitech-professor exec backup sh /scripts/verify-backup.sh /backups/imobitech-DATA.dump
+```
+
+Exporte cópias para outro armazenamento antes de remover volumes ou reinstalar Docker. O volume local protege contra erros da aplicação, mas não contra perda do computador. Os dumps contêm dados e devem ter acesso restrito. Não envie backups ou arquivos `.env` ao Git.
+
+Para acompanhar disponibilidade, com o certificado público exportado, execute em outro terminal:
+
+```powershell
+$env:NODE_EXTRA_CA_CERTS = "$PWD\imobitech-local-ca.crt"
+node scripts/monitor-availability.mjs
+```
+
+Mantenha esse processo ativo; ele consulta `/api/health` a cada minuto e grava somente horário, status e duração em `.local/monitoring/`. Para gerar o resumo, execute `node scripts/monitor-availability.mjs --report`. A medição local curta não comprova 99% mensal. Registre separadamente os períodos de manutenção.
+
+Se um ambiente ficar desligado por semanas e apresentar certificado expirado ao reiniciar, consulte `docker compose --env-file .env.docker -p imobitech-professor logs web`. Aguarde a renovação automática e reinicie apenas `web` se ele continuar servindo o certificado antigo. Não desative a validação HTTPS nem apague volumes para resolver isso.
 
 ## 6. Verificar persistência diretamente no PostgreSQL
 
@@ -107,7 +141,7 @@ Não é preciso consultar ou divulgar hashes de senha para verificar a persistê
 
 ## 7. Testes automatizados e evidências
 
-Resultados e procedimentos estão em [docs/TESTES_V01.md](docs/TESTES_V01.md). As evidências incluem a saída da suíte de API, verificações HTTPS e capturas reais dos testes de navegador. O código dos testes está em `backend/test/` e `e2e/`.
+Resultados e procedimentos atuais estão na [matriz US01–US07](docs/MATRIZ_MVP.md). As evidências incluem a saída da suíte de API, verificações HTTPS e capturas reais dos testes de navegador. O código dos testes está em `backend/test/` e `e2e/`. A matriz da v0.1 é um registro histórico.
 
 Para executar a suíte da API dentro do Docker, crie um banco separado de teste, uma única vez:
 

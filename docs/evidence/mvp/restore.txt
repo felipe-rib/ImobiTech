@@ -1,0 +1,10 @@
+   entidade   | count
+--------------+-------
+ users        |    25
+ properties   |     8
+ contracts    |     2
+ payments     |     2
+ audit_events |     4
+(5 rows)
+
+Restauração verificada em banco temporário separado.

@@ -6,6 +6,9 @@ import { Login } from './pages/Login';
 import { Home } from './pages/Home';
 import { Users, UserForm } from './pages/Users';
 import { Properties, PropertyDetail, PropertyForm } from './pages/Properties';
+import { Contracts, ContractForm, ContractDetail } from './pages/Contracts';
+import { Finance, PaymentForm } from './pages/Finance';
+import { Visits, VisitForm } from './pages/Visits';
 import type { Role } from './types';
 function Guard({ roles }: { roles?: Role[] }) {
   const { user } = useAuth();
@@ -39,9 +42,25 @@ export default function App() {
         <Route element={<Shell />}>
           <Route index element={<Home />} />
           <Route element={<Guard roles={['admin']} />}>
+            <Route path="contracts/new" element={<ContractForm key="new-contract" />} />
+            <Route path="contracts/:id/edit" element={<ContractForm />} />
+            <Route path="contracts/:id/payments/new" element={<PaymentForm key="new-payment" />} />
+            <Route path="payments/:paymentId/edit" element={<PaymentForm />} />
             <Route path="users" element={<Users />} />
             <Route path="users/new" element={<UserForm key="new" />} />
             <Route path="users/:id" element={<UserForm />} />
+          </Route>
+          <Route element={<Guard roles={['admin', 'owner', 'tenant']} />}>
+            <Route path="contracts" element={<Contracts />} />
+            <Route path="contracts/:id" element={<ContractDetail />} />
+            <Route path="finance" element={<Contracts finance />} />
+            <Route path="contracts/:id/finance" element={<Finance />} />
+          </Route>
+          <Route element={<Guard roles={['admin', 'broker']} />}>
+            <Route path="visits" element={<Visits />} />
+          </Route>
+          <Route element={<Guard roles={['broker']} />}>
+            <Route path="visits/new" element={<VisitForm />} />
           </Route>
           <Route element={<Guard roles={['admin', 'broker', 'owner']} />}>
             <Route path="properties" element={<Properties />} />

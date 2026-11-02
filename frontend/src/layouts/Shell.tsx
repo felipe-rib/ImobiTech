@@ -1,6 +1,16 @@
 import { useState } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
-import { Building2, House, Users, LogOut, Menu, X } from 'lucide-react';
+import {
+  Building2,
+  House,
+  Users,
+  LogOut,
+  Menu,
+  X,
+  FileText,
+  Wallet,
+  CalendarDays,
+} from 'lucide-react';
 import { useAuth } from '../hooks/auth';
 import { roleLabels } from '../types';
 import { Alert } from '../components/ui';
@@ -36,6 +46,24 @@ export function Shell() {
             <House size={19} />
             Início
           </NavLink>
+          {['admin', 'broker'].includes(user!.role) && (
+            <NavLink to="/visits">
+              <CalendarDays size={19} />
+              Visitas
+            </NavLink>
+          )}
+          {user?.role !== 'broker' && (
+            <>
+              <NavLink to="/contracts">
+                <FileText size={19} />
+                Contratos
+              </NavLink>
+              <NavLink to="/finance">
+                <Wallet size={19} />
+                Financeiro
+              </NavLink>
+            </>
+          )}
           {user?.role !== 'tenant' && (
             <NavLink to="/properties">
               <Building2 size={19} />
@@ -75,7 +103,7 @@ export function Shell() {
             <LogOut size={18} />
             {busy ? 'Saindo…' : 'Sair da conta'}
           </button>
-          <small>ImobiTech · v0.1</small>
+          <small>ImobiTech · MVP 1.0</small>
         </div>
       </aside>
       <main className="main">

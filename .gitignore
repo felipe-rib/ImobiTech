@@ -11,3 +11,5 @@ test-results/
 playwright-report/
 docs/evidence/*.crt
 imobitech-local-ca.crt
+*.dump
+backups/

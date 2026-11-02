@@ -1,4 +1,5 @@
 import { z } from 'zod';
+z.config(z.locales.pt());
 export const roles = ['admin', 'broker', 'owner', 'tenant'] as const;
 export type Role = (typeof roles)[number];
 export interface User {

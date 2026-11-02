@@ -1,17 +1,17 @@
-# ImobiTech · v0.1
+# ImobiTech · entrega US01–US07
 
-Sistema de gestão de locações imobiliárias do Grupo 06 da Universidade Católica de Brasília. A primeira entrega implementa **US01 (autenticação), US02 (usuários) e US03 (imóveis)** com PostgreSQL real. O README original identificava a disciplina como Soluções Computacionais; o prompt desta entrega a identifica como Engenharia de Software.
+Sistema de gestão de locações imobiliárias do Grupo 06 da Universidade Católica de Brasília. Implementa **US01–US07: autenticação, usuários, imóveis, visitas, contratos, pagamentos e consulta financeira**, com PostgreSQL real. A referência aprovada é o DRS + Arquitetura; consulte a [decisão de escopo](docs/ESCOPO_MVP.md) e a [matriz da entrega atual](docs/MATRIZ_MVP.md). Evidências da v0.1 são históricas e não substituem a matriz atual.
 
 **Para avaliar a entrega sem hospedagem, comece pelo [Guia do professor](GUIA_PROFESSOR.md).** Ele explica a instalação local completa com Docker, credenciais próprias, HTTPS e roteiro de demonstração.
 
 ## Escopo
 
-- Administrador: gerencia usuários e imóveis.
-- Corretor: gerencia imóveis; busca proprietários ativos por nome, recebendo somente ID e nome.
-- Proprietário: consulta exclusivamente os próprios imóveis, sem edição.
-- Inquilino: área autenticada com seus dados de acesso, sem módulos administrativos.
+- Administrador: gerencia usuários, imóveis, contratos e pagamentos; consulta visitas e histórico de alterações.
+- Corretor: gerencia imóveis e sua agenda de visitas; busca proprietários ativos por nome, recebendo somente ID e nome.
+- Proprietário: consulta exclusivamente os próprios imóveis, contratos e pagamentos, sem edição.
+- Inquilino: consulta seus contratos e situação financeira, sem módulos administrativos.
 - Login, logout, usuários ativos/inativos, pesquisa, filtros, paginação, cadastro, edição e consulta de detalhes.
-- Sem visitas, contratos, pagamentos, chat, assinatura, métricas artificiais ou multi-tenancy.
+- Sem chat, assinatura digital, boletos, integração bancária ou multiempresa.
 
 ## Tecnologias e estrutura
 
@@ -22,12 +22,15 @@ frontend/src/
   components/   componentes acessíveis e estados de interface
   hooks/        sessão e consultas
   layouts/      navegação responsiva
-  pages/        login, início, usuários e imóveis
+  pages/        login, início, usuários, imóveis, visitas, contratos e financeiro
   services/     cliente HTTP
 backend/src/
   auth/         controller, service, repository e guards
   users/        controller, service e repository
   properties/   controller, service e repository
+  visits/       agenda com proteção contra sobreposição
+  contracts/    locações, disponibilidade e histórico
+  payments/     lançamentos e situação financeira por vínculo
   shared/       configuração, validações e tipos
   database/     conexão, migrations e primeiro administrador
 backend/test/   testes de integração em PostgreSQL e validação
@@ -112,11 +115,11 @@ npm.cmd test
 
 `build` verifica TypeScript nas duas aplicações e gera `backend/dist` e `frontend/dist`. A API compilada inicia com `npm.cmd start -w backend`.
 
-Com API e frontend em execução, `node scripts/smoke.mjs` verifica a integração HTTP usando o administrador definido no `.env`, faz logout ao terminar e registra somente resultados sem credenciais em `docs/evidence/smoke.txt`.
+Com API e frontend em execução, `node scripts/smoke.mjs` verifica a integração HTTP usando o administrador definido no `.env`, faz logout ao terminar e registra somente resultados sem credenciais em `docs/evidence/mvp/smoke.txt`. O padrão é `http://localhost:5173`; para outro ambiente, defina `SMOKE_BASE_URL` e use as credenciais correspondentes. HTTPS local exige confiar na CA, conforme o guia.
 
 Os testes exigem PostgreSQL real. Não substituem persistência por mocks e **falham explicitamente** se `TEST_DATABASE_URL` estiver ausente ou apontar para o banco da aplicação. Cada execução cria um schema aleatório no banco de teste, aplica as migrations, executa os cenários e remove apenas esse schema. O usuário do banco precisa poder criar schemas; não precisa de superusuário. Dados sintéticos são restritos aos testes, e a aplicação inicia somente com o administrador solicitado.
 
-Resultados executados, limitações e procedimentos manuais: [docs/TESTES_V01.md](docs/TESTES_V01.md). Roteiro de demonstração: [docs/ENTREGA_V01.md](docs/ENTREGA_V01.md).
+Resultados atuais e limitações: [matriz US01–US07](docs/MATRIZ_MVP.md). Roteiro completo: [guia do professor](GUIA_PROFESSOR.md). Os arquivos TESTES_V01 e ENTREGA_V01 documentam somente a primeira entrega.
 
 ## HTTPS em homologação
 
@@ -127,7 +130,7 @@ docker compose build
 docker compose up -d db
 docker compose run --rm api node backend/dist/database/migrate.js
 docker compose run --rm api node backend/dist/database/admin.js
-docker compose up -d api web
+docker compose up -d api web backup
 ```
 
 - O Compose desta entrega publica 80/443 somente em `127.0.0.1`, para avaliação local sem hospedagem pública.
@@ -152,9 +155,11 @@ Na API direta: `/auth/login`, `/auth/logout`, `/auth/me`, `/users`, `/users/:id`
 
 ## Decisões e limites
 
-Não foram fornecidos DRS 2.1, Documento de Visão ou matriz original. O prompt é a referência implementada; a conformidade literal de RN-001 a RN-006 precisa ser conferida contra esses documentos. Identificação e telefone são opcionais para minimizar coleta. Não foram acrescentados CPF, CRECI ou campos específicos sem especificação.
+O DRS 2.1 e a Arquitetura fornecidos orientam a entrega, conforme [decisão de escopo](docs/ESCOPO_MVP.md). Identificação e telefone são opcionais para minimizar coleta. Não foram acrescentados CPF, CRECI ou dados bancários sem necessidade funcional.
 
-Imóveis iniciam Disponíveis; a edição pode marcá-los Indisponíveis manualmente. Não há regra baseada em contrato nesta versão. Proprietário vinculado a imóvel não pode mudar de perfil; não é possível desativar ou rebaixar o último administrador ativo. Proprietários inativos mantêm seus vínculos existentes, mas não recebem novos vínculos nem autenticam. Alterar senha, perfil ou situação revoga sessões daquele usuário.
+Imóveis iniciam Disponíveis; contratos ativos os tornam Indisponíveis e impedem troca de proprietário. Encerrar o contrato libera o imóvel. Vínculos históricos preservam os perfis das partes. Não é possível desativar ou rebaixar o último administrador ativo. Proprietários inativos mantêm seus vínculos existentes, mas não recebem novos vínculos nem autenticam. Alterar senha, perfil ou situação revoga sessões daquele usuário.
+
+Rotas adicionais: `/visits` (GET/POST), `/visits/:id` (PATCH); `/contracts` (GET/POST), `/contracts/:id` (GET/PATCH), `/contracts/:id/history` (GET administrativo); `/contracts/:id/payments` (GET/POST), `/payments/:id` (GET/PATCH). Não há exclusão de contratos ou pagamentos. A migração 002 instala a extensão confiável `btree_gist`; o usuário de migração deve ser proprietário do banco ou ter permissão CREATE nele. Em banco gerenciado, peça ao administrador para instalar essa extensão antes da migração.
 
 Sessões armazenam somente SHA-256 de tokens aleatórios de 256 bits; senhas usam Argon2id. Senhas/hashes não são retornados e dados pessoais não entram nos logs. Limitação de tentativas é local ao processo, adequada à implantação única desta entrega. Sessões expiradas são limpas a cada novo login.
 

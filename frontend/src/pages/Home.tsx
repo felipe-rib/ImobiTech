@@ -1,5 +1,13 @@
 import { Link } from 'react-router-dom';
-import { ArrowUpRight, Building2, Users, ShieldCheck } from 'lucide-react';
+import {
+  ArrowUpRight,
+  Building2,
+  Users,
+  ShieldCheck,
+  FileText,
+  Wallet,
+  CalendarDays,
+} from 'lucide-react';
 import { useAuth } from '../hooks/auth';
 import { Heading } from '../components/ui';
 import { roleLabels } from '../types';
@@ -18,7 +26,7 @@ export function Home() {
           <h2>Uma gestão mais simples começa aqui.</h2>
           <p>
             {user!.role === 'tenant'
-              ? 'Sua conta está ativa. Nesta versão, sua área permite confirmar suas informações de acesso.'
+              ? 'Consulte seus contratos e acompanhe pagamentos e vencimentos com segurança.'
               : 'Acesse os cadastros disponíveis para o seu perfil e mantenha as informações organizadas.'}
           </p>
         </div>
@@ -26,6 +34,46 @@ export function Home() {
       </section>
       <h2 className="section-title">Seu espaço de trabalho</h2>
       <div className="shortcut-grid">
+        {user!.role !== 'broker' && (
+          <>
+            <Link className="shortcut" to="/contracts">
+              <span className="shortcut-icon">
+                <FileText />
+              </span>
+              <ArrowUpRight className="shortcut-arrow" />
+              <h3>Contratos de locação</h3>
+              <p>
+                Consulte a vigência, as partes e as condições dos contratos permitidos ao seu
+                perfil.
+              </p>
+              <strong>Acessar contratos →</strong>
+            </Link>
+            <Link className="shortcut" to="/finance">
+              <span className="shortcut-icon">
+                <Wallet />
+              </span>
+              <ArrowUpRight className="shortcut-arrow" />
+              <h3>Situação financeira</h3>
+              <p>Acompanhe pagamentos registrados, valores em aberto e vencimentos.</p>
+              <strong>Acessar financeiro →</strong>
+            </Link>
+          </>
+        )}
+        {['admin', 'broker'].includes(user!.role) && (
+          <Link className="shortcut" to="/visits">
+            <span className="shortcut-icon">
+              <CalendarDays />
+            </span>
+            <ArrowUpRight className="shortcut-arrow" />
+            <h3>Agenda de visitas</h3>
+            <p>
+              {user!.role === 'broker'
+                ? 'Agende, confirme ou cancele os seus atendimentos.'
+                : 'Consulte a agenda de atendimento dos corretores.'}
+            </p>
+            <strong>Acessar visitas →</strong>
+          </Link>
+        )}
         {user!.role !== 'tenant' && (
           <Link className="shortcut" to="/properties">
             <span className="shortcut-icon">

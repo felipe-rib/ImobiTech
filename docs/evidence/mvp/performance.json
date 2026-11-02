@@ -1,0 +1,303 @@
+{
+  "at": "2026-11-02T23:21:45.296Z",
+  "concurrency": 50,
+  "scope": "50 consultas simultâneas via HTTPS em Docker local, uma sessão administrativa; não representa 50 usuários independentes nem teste de capacidade prolongado.",
+  "p95Ms": 302,
+  "maxMs": 306,
+  "results": [
+    {
+      "path": "/properties",
+      "status": 200,
+      "ms": 207
+    },
+    {
+      "path": "/contracts",
+      "status": 200,
+      "ms": 260
+    },
+    {
+      "path": "/visits",
+      "status": 200,
+      "ms": 242
+    },
+    {
+      "path": "/users",
+      "status": 200,
+      "ms": 242
+    },
+    {
+      "path": "/health",
+      "status": 200,
+      "ms": 200
+    },
+    {
+      "path": "/properties",
+      "status": 200,
+      "ms": 197
+    },
+    {
+      "path": "/contracts",
+      "status": 200,
+      "ms": 267
+    },
+    {
+      "path": "/visits",
+      "status": 200,
+      "ms": 269
+    },
+    {
+      "path": "/users",
+      "status": 200,
+      "ms": 258
+    },
+    {
+      "path": "/health",
+      "status": 200,
+      "ms": 181
+    },
+    {
+      "path": "/properties",
+      "status": 200,
+      "ms": 255
+    },
+    {
+      "path": "/contracts",
+      "status": 200,
+      "ms": 230
+    },
+    {
+      "path": "/visits",
+      "status": 200,
+      "ms": 227
+    },
+    {
+      "path": "/users",
+      "status": 200,
+      "ms": 226
+    },
+    {
+      "path": "/health",
+      "status": 200,
+      "ms": 191
+    },
+    {
+      "path": "/properties",
+      "status": 200,
+      "ms": 243
+    },
+    {
+      "path": "/contracts",
+      "status": 200,
+      "ms": 231
+    },
+    {
+      "path": "/visits",
+      "status": 200,
+      "ms": 222
+    },
+    {
+      "path": "/users",
+      "status": 200,
+      "ms": 251
+    },
+    {
+      "path": "/health",
+      "status": 200,
+      "ms": 197
+    },
+    {
+      "path": "/properties",
+      "status": 200,
+      "ms": 235
+    },
+    {
+      "path": "/contracts",
+      "status": 200,
+      "ms": 238
+    },
+    {
+      "path": "/visits",
+      "status": 200,
+      "ms": 232
+    },
+    {
+      "path": "/users",
+      "status": 200,
+      "ms": 244
+    },
+    {
+      "path": "/health",
+      "status": 200,
+      "ms": 205
+    },
+    {
+      "path": "/properties",
+      "status": 200,
+      "ms": 244
+    },
+    {
+      "path": "/contracts",
+      "status": 200,
+      "ms": 246
+    },
+    {
+      "path": "/visits",
+      "status": 200,
+      "ms": 242
+    },
+    {
+      "path": "/users",
+      "status": 200,
+      "ms": 244
+    },
+    {
+      "path": "/health",
+      "status": 200,
+      "ms": 214
+    },
+    {
+      "path": "/properties",
+      "status": 200,
+      "ms": 242
+    },
+    {
+      "path": "/contracts",
+      "status": 200,
+      "ms": 298
+    },
+    {
+      "path": "/visits",
+      "status": 200,
+      "ms": 292
+    },
+    {
+      "path": "/users",
+      "status": 200,
+      "ms": 289
+    },
+    {
+      "path": "/health",
+      "status": 200,
+      "ms": 282
+    },
+    {
+      "path": "/properties",
+      "status": 200,
+      "ms": 292
+    },
+    {
+      "path": "/contracts",
+      "status": 200,
+      "ms": 296
+    },
+    {
+      "path": "/visits",
+      "status": 200,
+      "ms": 164
+    },
+    {
+      "path": "/users",
+      "status": 200,
+      "ms": 295
+    },
+    {
+      "path": "/health",
+      "status": 200,
+      "ms": 292
+    },
+    {
+      "path": "/properties",
+      "status": 200,
+      "ms": 299
+    },
+    {
+      "path": "/contracts",
+      "status": 200,
+      "ms": 302
+    },
+    {
+      "path": "/visits",
+      "status": 200,
+      "ms": 178
+    },
+    {
+      "path": "/users",
+      "status": 200,
+      "ms": 298
+    },
+    {
+      "path": "/health",
+      "status": 200,
+      "ms": 293
+    },
+    {
+      "path": "/properties",
+      "status": 200,
+      "ms": 301
+    },
+    {
+      "path": "/contracts",
+      "status": 200,
+      "ms": 306
+    },
+    {
+      "path": "/visits",
+      "status": 200,
+      "ms": 302
+    },
+    {
+      "path": "/users",
+      "status": 200,
+      "ms": 304
+    },
+    {
+      "path": "/health",
+      "status": 200,
+      "ms": 299
+    }
+  ],
+  "writes": [
+    {
+      "path": "/users",
+      "method": "POST",
+      "status": 201,
+      "ms": 93
+    },
+    {
+      "path": "/users",
+      "method": "POST",
+      "status": 201,
+      "ms": 86
+    },
+    {
+      "path": "/properties",
+      "method": "POST",
+      "status": 201,
+      "ms": 12
+    },
+    {
+      "path": "/contracts",
+      "method": "POST",
+      "status": 201,
+      "ms": 14
+    },
+    {
+      "path": "/contracts/:id/payments",
+      "method": "POST",
+      "status": 201,
+      "ms": 13
+    },
+    {
+      "path": "/payments/:id",
+      "method": "PATCH",
+      "status": 200,
+      "ms": 11
+    },
+    {
+      "path": "/contracts/:id",
+      "method": "PATCH",
+      "status": 200,
+      "ms": 11
+    }
+  ]
+}

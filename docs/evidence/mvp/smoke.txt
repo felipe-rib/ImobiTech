@@ -1,0 +1,8 @@
+Execução: 2026-11-02T23:23:04.129Z
+PASS Frontend HTTP 200 com documento ImobiTech
+PASS Proxy web -> Fastify -> PostgreSQL real
+PASS API via proxy: sem sessão retorna 401
+PASS Administrador inicial autentica via HTTP real
+PASS Listagem autenticada via cookie de sessão
+PASS Logout revoga a sessão no servidor
+Não verifica renderização visual nem transporte TLS.

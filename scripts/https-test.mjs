@@ -32,6 +32,6 @@ assert.equal((await fetch('https://localhost/api/auth/me', { headers: { cookie }
 checks.push('PASS logout HTTPS revoga sessão');
 console.log(checks.join('\n'));
 await writeFile(
-  'docs/evidence/https.txt',
+  'docs/evidence/mvp/https.txt',
   `Executado em ${new Date().toISOString()}\n${checks.join('\n')}\n`,
 );

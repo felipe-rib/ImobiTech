@@ -7,5 +7,6 @@ mkdir -p /root/.pki/nssdb
 certutil -N -d sql:/root/.pki/nssdb --empty-password
 certutil -A -d sql:/root/.pki/nssdb -n imobitech-local-qa -t 'C,,' -i /caddy/caddy/pki/authorities/local/root.crt
 export NODE_EXTRA_CA_CERTS=/caddy/caddy/pki/authorities/local/root.crt
+mkdir -p docs/evidence/mvp
 node scripts/https-test.mjs
 node node_modules/@playwright/test/cli.js test

@@ -1,0 +1,29 @@
+# Registro de homologação — 02/11/2026
+
+Ambiente: Windows com Node 22.20.0 e PostgreSQL 17; Docker Linux com API Node 22, PostgreSQL 17, Caddy e Playwright 1.64.1. Dados de teste sintéticos. Projeto Docker isolado: `imobitech-qa`.
+
+| Comando/verificação | Resultado |
+|---|---|
+| `npm.cmd run build` | Saída 0; TypeScript backend/frontend e bundle Vite concluídos |
+| `npm.cmd test` | Saída 0; 23 testes, 23 aprovados, nenhum ignorado |
+| API Docker: `node scripts/test-in-container.mjs` | Saída 0; os mesmos 23 testes aprovados |
+| Migração 002 no banco QA existente | Saída 0; usuários e imóveis anteriores preservados |
+| Backup e `verify-backup.sh` | Saída 0; recuperação em banco temporário separado, removido ao final |
+| Monitor `--once` e `--report` | Uma amostra HTTP 200; não é evidência mensal |
+| Suíte geral Playwright + HTTPS | Saída 0; 8 testes aprovados, nenhum ignorado; HTTPS com validação de certificado |
+| Compatibilidade Chrome/Edge/Firefox | Saída 0; 3 fluxos completos aprovados, nenhum ignorado; Firefox com perfil NSS temporário confiável |
+| `scripts/smoke.mjs` com `SMOKE_BASE_URL=https://localhost` | Saída 0; frontend, proxy, banco, proteção sem sessão, login, consulta e logout |
+| `scripts/performance.mjs` | Saída 0; 50 consultas concorrentes, p95 302 ms, máximo 306 ms; sete gravações abaixo de 3 segundos |
+| Verificação de credenciais locais em arquivos publicáveis | Nenhuma senha local gerada encontrada |
+
+O log `backend-docker.txt` inclui o formato `NativeCommandError` usado pelo PowerShell para mensagens informativas que o Docker envia a stderr; o processo terminou com código 0 e o resumo TAP confirma ausência de testes reprovados.
+
+## Correções durante a homologação
+
+- O ambiente antigo estava desligado desde outubro. Caddy renovou a CA intermediária; reiniciar somente o serviço web permitiu servir um certificado válido. O teste TLS passou sem `ignoreHTTPSErrors`.
+- O teste de integração adicional esperava 409 para proprietário divergente; a validação de entrada retorna corretamente 400. A assertiva foi corrigida mantendo a verificação de rollback.
+- A execução conjunta excedia o limite de dez logins por minuto. Os testes aguardam a janela entre suítes/navegadores; a proteção da aplicação continua habilitada.
+- O seletor de status financeiro encontrava tanto a opção de filtro quanto o status do lançamento. A assertiva foi limitada ao artigo do lançamento.
+- Firefox no container não herdou a CA do sistema nem a política de instalação na execução automatizada. A correção importa a CA com `certutil` no banco NSS de um perfil temporário exclusivo; esse perfil é removido ao terminar. O teste de navegação HTTPS respondeu 200 sem ignorar certificados.
+
+Os relatórios JSON mantêm os resultados das execuções finais correspondentes. Capturas mostram somente cadastros fictícios; não incluem credenciais.

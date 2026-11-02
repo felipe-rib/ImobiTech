@@ -6,7 +6,7 @@ export default defineConfig({
   retries: 0,
   timeout: 120_000,
   expect: { timeout: 10_000 },
-  reporter: [['list'], ['json', { outputFile: 'docs/evidence/browser-results.json' }]],
+  reporter: [['list'], ['json', { outputFile: 'docs/evidence/mvp/browser-results.json' }]],
   use: {
     baseURL: 'https://localhost',
     browserName: 'chromium',

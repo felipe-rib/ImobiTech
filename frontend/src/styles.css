@@ -1029,3 +1029,146 @@ td {
     transition: none !important;
   }
 }
+.rental-list {
+  padding: 0 22px;
+}
+.rental-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 24px 0;
+  border-bottom: 1px solid #edf0f5;
+}
+.rental-row:last-child {
+  border-bottom: 0;
+}
+.rental-row > div {
+  min-width: 0;
+}
+.rental-row h2 {
+  margin: 10px 0 7px;
+  overflow-wrap: anywhere;
+}
+.rental-row p {
+  font-size: 13px;
+  color: #6f8194;
+  overflow-wrap: anywhere;
+}
+.action-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+.button.danger {
+  background: #a34138;
+  border-color: #a34138;
+  color: white;
+}
+.button.danger:hover {
+  background: #8d322b;
+}
+.facts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  margin: 25px 0 30px;
+}
+.facts-grid dt {
+  font-size: 12px;
+  color: #718093;
+  margin-bottom: 5px;
+}
+.facts-grid dd {
+  margin: 0;
+  font-size: 15px;
+  overflow-wrap: anywhere;
+}
+.confirmation {
+  margin-top: 25px;
+  padding: 22px;
+  border: 1px solid #e8d4bf;
+  border-radius: 10px;
+  background: #fff9f0;
+}
+.confirmation p {
+  margin: 12px 0 20px;
+}
+.history-item {
+  padding: 16px 0;
+  border-bottom: 1px solid #edf0f5;
+  font-size: 13px;
+}
+.section-gap {
+  margin-top: 25px;
+}
+.finance-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 25px;
+}
+.finance-summary > div {
+  padding: 23px;
+  border: 1px solid #e3e8ef;
+  border-radius: 12px;
+  background: white;
+}
+.finance-summary span {
+  display: block;
+  font-size: 12px;
+  color: #718093;
+}
+.finance-summary strong {
+  display: block;
+  font-size: 23px;
+  color: #183450;
+  margin-top: 10px;
+  overflow-wrap: anywhere;
+}
+.lookup {
+  min-width: 0;
+}
+.lookup .field:first-child {
+  margin-bottom: 12px;
+}
+.contract-parties p {
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+.sidebar {
+  overflow-y: auto;
+}
+@media (max-width: 900px) {
+  .finance-summary {
+    grid-template-columns: 1fr;
+  }
+  .rental-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+@media (max-width: 760px) {
+  .facts-grid {
+    grid-template-columns: 1fr;
+  }
+  .rental-list {
+    padding: 0 18px;
+  }
+  .rental-row > .button {
+    width: 100%;
+  }
+  .action-row {
+    width: 100%;
+  }
+  .action-row .button {
+    flex: 1;
+  }
+  .sidebar nav {
+    margin-bottom: 20px;
+  }
+  .sidebar-footer {
+    margin-top: 20px;
+  }
+}

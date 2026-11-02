@@ -1,0 +1,172 @@
+docker :  Container imobitech-qa-db-1 Running
+No linha:2 caractere:1
++ docker compose --env-file .env.qa -p imobitech-qa run --rm api node s ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ( Container imobitech-qa-db-1 Running :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+
+ Container imobitech-qa-db-1 Waiting
+ Container imobitech-qa-db-1 Healthy
+ Container imobitech-qa-api-run-23344516e83e Creating
+ Container imobitech-qa-api-run-23344516e83e Created
+
+> imobitech@0.1.0 test
+> npm run test -w backend
+
+
+> @imobitech/backend@0.1.0 test
+> tsx --test test/*.test.ts
+
+TAP version 13
+# Subtest: T1.01 / T1.02: quatro perfis autenticam e recebem somente dados públicos
+ok 1 - T1.01 / T1.02: quatro perfis autenticam e recebem somente dados públicos
+  ---
+  duration_ms: 1904.811654
+  type: 'test'
+  ...
+# Subtest: T1.03 / T1.04: credenciais inválidas e inativo retornam erro genérico idêntico
+ok 2 - T1.03 / T1.04: credenciais inválidas e inativo retornam erro genérico idêntico
+  ---
+  duration_ms: 304.337035
+  type: 'test'
+  ...
+# Subtest: T1.05: administrador cadastra usuário e persiste no PostgreSQL
+ok 3 - T1.05: administrador cadastra usuário e persiste no PostgreSQL
+  ---
+  duration_ms: 112.408723
+  type: 'test'
+  ...
+# Subtest: T1.06 / T1.07: atualização e perfil persistem; sessão anterior é revogada
+ok 4 - T1.06 / T1.07: atualização e perfil persistem; sessão anterior é revogada
+  ---
+  duration_ms: 134.811561
+  type: 'test'
+  ...
+# Subtest: T1.08 / T1.15: rotas protegidas retornam 401 e perfis sem permissão recebem 403
+ok 5 - T1.08 / T1.15: rotas protegidas retornam 401 e perfis sem permissão recebem 403
+  ---
+  duration_ms: 38.305378
+  type: 'test'
+  ...
+# Subtest: T1.09: e-mail e identificador únicos; perfil inválido e campos extras rejeitados
+ok 6 - T1.09: e-mail e identificador únicos; perfil inválido e campos extras rejeitados
+  ---
+  duration_ms: 224.42742
+  type: 'test'
+  ...
+# Subtest: T1.10 / T1.13: corretor cria imóvel com situação Disponível e vínculo real
+ok 7 - T1.10 / T1.13: corretor cria imóvel com situação Disponível e vínculo real
+  ---
+  duration_ms: 16.823673
+  type: 'test'
+  ...
+# Subtest: T1.11: alteração do imóvel persiste e aparece na consulta
+ok 8 - T1.11: alteração do imóvel persiste e aparece na consulta
+  ---
+  duration_ms: 13.605555
+  type: 'test'
+  ...
+# Subtest: T1.12: proprietário obrigatório, existente, ativo e com perfil correto
+ok 9 - T1.12: proprietário obrigatório, existente, ativo e com perfil correto
+  ---
+  duration_ms: 33.515622
+  type: 'test'
+  ...
+# Subtest: T1.16: proprietário consulta somente seus imóveis e não pode editá-los
+ok 10 - T1.16: proprietário consulta somente seus imóveis e não pode editá-los
+  ---
+  duration_ms: 57.984525
+  type: 'test'
+  ...
+# Subtest: T1.17: Argon2id no banco; hashes ausentes em todas as respostas de usuários
+ok 11 - T1.17: Argon2id no banco; hashes ausentes em todas as respostas de usuários
+  ---
+  duration_ms: 90.114832
+  type: 'test'
+  ...
+# Subtest: Filtros, paginação, validação e consultas parametrizadas
+ok 12 - Filtros, paginação, validação e consultas parametrizadas
+  ---
+  duration_ms: 19.376122
+  type: 'test'
+  ...
+# Subtest: CSRF: rejeita origem externa e ausente em mutações
+ok 13 - CSRF: rejeita origem externa e ausente em mutações
+  ---
+  duration_ms: 1.699321
+  type: 'test'
+  ...
+# Subtest: Último administrador é preservado; desativação invalida sessão
+ok 14 - Último administrador é preservado; desativação invalida sessão
+  ---
+  duration_ms: 33.778035
+  type: 'test'
+  ...
+# Subtest: T1.14 parcial: cookie Secure em produção e cabeçalhos de proteção
+ok 15 - T1.14 parcial: cookie Secure em produção e cabeçalhos de proteção
+  ---
+  duration_ms: 95.589827
+  type: 'test'
+  ...
+# Subtest: Validação de campos, proprietário inativo e integridade no banco
+ok 16 - Validação de campos, proprietário inativo e integridade no banco
+  ---
+  duration_ms: 22.19793
+  type: 'test'
+  ...
+# Subtest: Expiração e logout invalidam a sessão no servidor
+ok 17 - Expiração e logout invalidam a sessão no servidor
+  ---
+  duration_ms: 33.266988
+  type: 'test'
+  ...
+# Subtest: Limite de tentativas de autenticação
+ok 18 - Limite de tentativas de autenticação
+  ---
+  duration_ms: 93.541731
+  type: 'test'
+  ...
+# Subtest: US04–US07: fluxo completo, concorrência, isolamento e histórico financeiro
+ok 19 - US04–US07: fluxo completo, concorrência, isolamento e histórico financeiro
+  ---
+  duration_ms: 2321.871285
+  type: 'test'
+  ...
+# Subtest: RN007–RN014: conflitos independentes, vínculos inválidos e rollback
+ok 20 - RN007–RN014: conflitos independentes, vínculos inválidos e rollback
+  ---
+  duration_ms: 320.782471
+  type: 'test'
+  ...
+# Subtest: PATCH não reativa usuário nem altera campos omitidos
+ok 21 - PATCH não reativa usuário nem altera campos omitidos
+  ---
+  duration_ms: 5.847435
+  type: 'test'
+  ...
+# Subtest: Cadastro exige senha forte em tamanho e perfil único
+ok 22 - Cadastro exige senha forte em tamanho e perfil único
+  ---
+  duration_ms: 3.107027
+  type: 'test'
+  ...
+# Subtest: Imóvel não aceita situação inicial enviada pelo cliente
+ok 23 - Imóvel não aceita situação inicial enviada pelo cliente
+  ---
+  duration_ms: 1.990279
+  type: 'test'
+  ...
+1..23
+# tests 23
+# suites 0
+# pass 23
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 5176.038515
+npm notice
+npm notice New major version of npm available! 10.9.9 -> 12.2.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.1
+npm notice To update run: npm install -g npm@12.2.1
+npm notice

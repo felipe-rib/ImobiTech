@@ -53,8 +53,8 @@ async function noOverflow(page: Page) {
   ).toBeLessThanOrEqual(geometry.viewport + 1);
 }
 async function screenshot(page: Page, name: string) {
-  await mkdir('docs/evidence/screenshots', { recursive: true });
-  await page.screenshot({ path: `docs/evidence/screenshots/${name}.png`, fullPage: true });
+  await mkdir('docs/evidence/mvp/screenshots', { recursive: true });
+  await page.screenshot({ path: `docs/evidence/mvp/screenshots/${name}.png`, fullPage: true });
 }
 
 test('UI-01: login, cadastro dos três perfis e edição de usuário', async ({ page }) => {

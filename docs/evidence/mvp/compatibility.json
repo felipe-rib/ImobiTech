@@ -1,0 +1,351 @@
+{
+  "config": {
+    "argv": [
+      "/usr/bin/node",
+      "/work/node_modules/@playwright/test/cli.js",
+      "test",
+      "--config",
+      "playwright.compat.config.ts"
+    ],
+    "configFile": "/work/playwright.compat.config.ts",
+    "rootDir": "/work/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/work/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "Chrome",
+        "name": "Chrome",
+        "testDir": "/work/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "rental.spec.ts"
+        ],
+        "timeout": 120000
+      },
+      {
+        "outputDir": "/work/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "Edge",
+        "name": "Edge",
+        "testDir": "/work/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "rental.spec.ts"
+        ],
+        "timeout": 120000
+      },
+      {
+        "outputDir": "/work/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "Firefox",
+        "name": "Firefox",
+        "testDir": "/work/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "rental.spec.ts"
+        ],
+        "timeout": 120000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/work/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "Chrome",
+        "testDir": "/work/e2e",
+        "snapshotDir": "/work/e2e",
+        "testIgnore": [],
+        "testMatch": "rental.spec.ts",
+        "timeout": 120000,
+        "use": {
+          "baseURL": "https://localhost",
+          "locale": "pt-BR",
+          "timezoneId": "America/Sao_Paulo",
+          "ignoreHTTPSErrors": false,
+          "actionTimeout": 15000,
+          "screenshot": "only-on-failure",
+          "browserName": "chromium",
+          "channel": "chrome"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "Chrome"
+      },
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/work/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "Edge",
+        "testDir": "/work/e2e",
+        "snapshotDir": "/work/e2e",
+        "testIgnore": [],
+        "testMatch": "rental.spec.ts",
+        "timeout": 120000,
+        "use": {
+          "baseURL": "https://localhost",
+          "locale": "pt-BR",
+          "timezoneId": "America/Sao_Paulo",
+          "ignoreHTTPSErrors": false,
+          "actionTimeout": 15000,
+          "screenshot": "only-on-failure",
+          "browserName": "chromium",
+          "channel": "msedge"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "Edge"
+      },
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "/work/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "Firefox",
+        "testDir": "/work/e2e",
+        "snapshotDir": "/work/e2e",
+        "testIgnore": [],
+        "testMatch": "rental.spec.ts",
+        "timeout": 120000,
+        "use": {
+          "baseURL": "https://localhost",
+          "locale": "pt-BR",
+          "timezoneId": "America/Sao_Paulo",
+          "ignoreHTTPSErrors": false,
+          "actionTimeout": 15000,
+          "screenshot": "only-on-failure",
+          "browserName": "firefox",
+          "launchOptions": {
+            "firefoxUserPrefs": {
+              "security.enterprise_roots.enabled": true
+            }
+          }
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": "Firefox"
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "docs/evidence/mvp/compatibility.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.1",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "rental.spec.ts",
+      "file": "rental.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "US04–US07: agenda, contrato, pagamento e consulta em três tamanhos",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [
+                {
+                  "type": "browser-version",
+                  "description": "156.0.8078.79"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "Chrome",
+              "projectName": "Chrome",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 17561,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-02T23:24:48.305Z",
+                  "annotations": [
+                    {
+                      "type": "browser-version",
+                      "description": "156.0.8078.79"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "09825e0a383bd5b5162c-566a57b27ef0ca13841a",
+          "file": "rental.spec.ts",
+          "line": 10,
+          "column": 5
+        },
+        {
+          "title": "US04–US07: agenda, contrato, pagamento e consulta em três tamanhos",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [
+                {
+                  "type": "browser-version",
+                  "description": "156.0.4314.58"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "Edge",
+              "projectName": "Edge",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 16809,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-11-02T23:26:23.141Z",
+                  "annotations": [
+                    {
+                      "type": "browser-version",
+                      "description": "156.0.4314.58"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "09825e0a383bd5b5162c-2b120709dc48b4da407f",
+          "file": "rental.spec.ts",
+          "line": 10,
+          "column": 5
+        },
+        {
+          "title": "US04–US07: agenda, contrato, pagamento e consulta em três tamanhos",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 120000,
+              "annotations": [
+                {
+                  "type": "browser-version",
+                  "description": "157.0"
+                }
+              ],
+              "expectedStatus": "passed",
+              "projectId": "Firefox",
+              "projectName": "Firefox",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 21297,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [
+                    {
+                      "buffer": ""
+                    },
+                    {
+                      "buffer": ""
+                    }
+                  ],
+                  "retry": 0,
+                  "startTime": "2026-11-02T23:27:56.961Z",
+                  "annotations": [
+                    {
+                      "type": "browser-version",
+                      "description": "157.0"
+                    }
+                  ],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "09825e0a383bd5b5162c-05b047038f97f5228452",
+          "file": "rental.spec.ts",
+          "line": 10,
+          "column": 5
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-02T23:24:38.025Z",
+    "duration": 266240.64800000004,
+    "expected": 3,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}
