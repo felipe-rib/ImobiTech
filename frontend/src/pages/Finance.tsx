@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { Link, useNavigate, useParams, useLocation } from 'react-router-dom';
-import { ArrowLeft, Wallet } from 'lucide-react';
+import { ArrowLeft, CalendarDays, Wallet } from 'lucide-react';
 import { Alert, Badge, Field, Heading, Loading, Pagination } from '../components/ui';
 import { calendarDate, stateLabels } from '../components/RentalUI';
 import { useAuth } from '../hooks/auth';
@@ -13,14 +13,26 @@ export function Finance() {
   const { user } = useAuth();
   const location = useLocation();
   const [page, setPage] = useState(1),
+    [view, setView] = useState<'next' | 'all'>('next'),
     [status, setStatus] = useState(''),
     [proofFiles, setProofFiles] = useState<Record<string, File>>({}),
     [busyId, setBusyId] = useState(''),
     [actionError, setActionError] = useState('');
   const contract = useResource<Contract>(`/contracts/${id}`);
   const result = useResource<PaymentPage>(
-    `/contracts/${id}/payments?page=${page}${status ? `&status=${status}` : ''}`,
+    `/contracts/${id}/payments?page=${view === 'next' ? 1 : page}${view === 'all' && status ? `&status=${status}` : ''}`,
   );
+  const visiblePayments =
+    view === 'next'
+      ? (result.data?.items.filter((payment) => !payment.paid_at).slice(0, 1) ?? [])
+      : (result.data?.items ?? []);
+  function installmentNumber(competence: string) {
+    const start = contract.data?.start_date.slice(0, 7);
+    if (!start) return null;
+    const [year, month] = competence.split('-').map(Number);
+    const [startYear, startMonth] = start.split('-').map(Number);
+    return (year - startYear) * 12 + month - startMonth + 1;
+  }
   async function sendProof(paymentId: string) {
     const file = proofFiles[paymentId];
     if (!file) return;
@@ -112,20 +124,57 @@ export function Finance() {
               </div>
             </div>
             <section className="panel">
+              <div className="payment-view-head">
+                <div>
+                  <p className="eyebrow">PARCELAS DO CONTRATO</p>
+                  <h2>{view === 'next' ? 'Próximo pagamento' : 'Todos os pagamentos'}</h2>
+                  <p className="muted small">
+                    {view === 'next'
+                      ? 'A primeira parcela que ainda não foi aprovada.'
+                      : 'Consulte todas as competências do contrato.'}
+                  </p>
+                </div>
+                <div className="payment-view-switch" role="group" aria-label="Exibir parcelas">
+                  <button
+                    type="button"
+                    aria-pressed={view === 'next'}
+                    className={view === 'next' ? 'active' : ''}
+                    onClick={() => {
+                      setView('next');
+                      setPage(1);
+                    }}
+                  >
+                    Próximo
+                  </button>
+                  <button
+                    type="button"
+                    aria-pressed={view === 'all'}
+                    className={view === 'all' ? 'active' : ''}
+                    onClick={() => {
+                      setView('all');
+                      setPage(1);
+                    }}
+                  >
+                    Todos
+                  </button>
+                </div>
+              </div>
               <div className="filters">
-                <select
-                  aria-label="Filtrar situação do pagamento"
-                  value={status}
-                  onChange={(e) => {
-                    setStatus(e.target.value);
-                    setPage(1);
-                  }}
-                >
-                  <option value="">Todas as situações</option>
-                  <option value="paid">Pago</option>
-                  <option value="pending">Pendente</option>
-                  <option value="overdue">Atrasado</option>
-                </select>
+                {view === 'all' && (
+                  <select
+                    aria-label="Filtrar situação do pagamento"
+                    value={status}
+                    onChange={(e) => {
+                      setStatus(e.target.value);
+                      setPage(1);
+                    }}
+                  >
+                    <option value="">Todas as situações</option>
+                    <option value="paid">Pago</option>
+                    <option value="pending">Pendente</option>
+                    <option value="overdue">Atrasado</option>
+                  </select>
+                )}
                 <Link className="text-link" to={`/contracts/${id}`}>
                   Ver contrato
                 </Link>
@@ -140,22 +189,34 @@ export function Finance() {
                   </button>
                 )}
               </div>
-              {result.data.items.length ? (
-                <div className="payment-grid">
-                  {result.data.items.map((p) => (
-                    <article className="panel payment-card" key={p.id}>
-                      <div>
+              {visiblePayments.length ? (
+                <div className={`payment-grid${view === 'next' ? ' payment-grid--next' : ''}`}>
+                  {visiblePayments.map((p) => (
+                    <article className={`payment-card payment-card--${p.status}`} key={p.id}>
+                      <div className="payment-card-top">
+                        <span className="payment-card-index">
+                          Parcela {installmentNumber(p.competence) ?? '—'} de 12
+                        </span>
                         <Badge active={p.status === 'paid'}>{stateLabels[p.status]}</Badge>
-                        <h2>
-                          {p.competence.split('-').reverse().join('/')} · {money(p.amount)}
-                        </h2>
-                        <p>Vencimento: {calendarDate(p.due_date)}</p>
-                        <p>
+                      </div>
+                      <div className="payment-card-main">
+                        <p className="payment-card-month">
+                          {new Date(`${p.competence}-01T12:00:00Z`).toLocaleDateString('pt-BR', {
+                            month: 'long',
+                            year: 'numeric',
+                            timeZone: 'UTC',
+                          })}
+                        </p>
+                        <strong className="payment-card-amount">{money(p.amount)}</strong>
+                        <p className="payment-card-due">
+                          <CalendarDays size={17} /> Vence em {calendarDate(p.due_date)}
+                        </p>
+                        <p className="payment-card-note">
                           {p.paid_at
                             ? `Pago em ${calendarDate(p.paid_at)}`
-                            : 'Sem pagamento registrado.'}
+                            : 'Pagamento ainda não confirmado.'}
                         </p>
-                        <p className="small">
+                        <p className="payment-card-review">
                           {p.review_status === 'submitted'
                             ? 'Comprovante enviado — aguardando análise.'
                             : p.review_status === 'rejected'
@@ -224,11 +285,21 @@ export function Finance() {
               ) : (
                 <div className="empty">
                   <Wallet size={35} />
-                  <h3>Nenhum lançamento encontrado</h3>
-                  <p>Não há lançamentos para este contrato com o filtro selecionado.</p>
+                  <h3>
+                    {view === 'next' && result.data.total
+                      ? 'Tudo em dia'
+                      : 'Nenhum lançamento encontrado'}
+                  </h3>
+                  <p>
+                    {view === 'next' && result.data.total
+                      ? 'Todas as parcelas foram aprovadas. Veja o histórico em Todos.'
+                      : 'Não há lançamentos para este contrato com o filtro selecionado.'}
+                  </p>
                 </div>
               )}
-              <Pagination page={page} total={result.data.total} onChange={setPage} />
+              {view === 'all' && (
+                <Pagination page={page} total={result.data.total} onChange={setPage} />
+              )}
             </section>
           </>
         )

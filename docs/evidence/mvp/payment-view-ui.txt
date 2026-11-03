@@ -1,0 +1,6 @@
+03/11/2026 — Chromium em container, ambiente Docker local imobitech-qa.
+Login como inquilino Daniel: aprovado.
+Visão Próximo: 1 card da primeira parcela não aprovada.
+Visão Todos: 12 cards do contrato em ordem cronológica.
+Novembro/2026 já estava aprovado no banco local; Próximo exibiu dezembro/2026.
+Build do frontend em Docker: aprovado.

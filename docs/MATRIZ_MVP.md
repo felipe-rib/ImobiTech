@@ -105,6 +105,7 @@ O valor mensal líquido é salvo no contrato. O desconto informado na criação 
 | FIN-02 | Geração em contrato existente acrescenta somente parcelas faltantes | Mesmo teste; [registro](evidence/mvp/finance-2026-11-03.txt) | Aprovado |
 | FIN-03 | Inquilino vinculado envia comprovante; administrador recusa ou aprova; recusa admite reenvio | Mesmo teste | Aprovado |
 | FIN-04 | Documento opcional do contrato é acessível aos perfis vinculados | Mesmo teste | Aprovado |
+| FIN-05 | Visão Próximo exibe apenas a primeira parcela não aprovada; Todos exibe as 12 parcelas | [Verificação em Chromium](evidence/mvp/payment-view-ui.txt) | Aprovado |
 
 
 Os testes de backend usam schemas temporários em banco de teste separado e dados fictícios. A suíte atual teve **28/28 aprovações no Docker**; o [log Docker anterior](evidence/mvp/backend-docker.txt) registra 25/25 antes das fotos e o [log local](evidence/mvp/backend-tests.txt) corresponde à suíte anterior de 23 testes. Consulte [registro de execuções](evidence/mvp/EXECUCOES.md), [registro atual](evidence/mvp/finance-2026-11-03.txt) e [guia do professor](../GUIA_PROFESSOR.md). Execute `npm.cmd test` com `TEST_DATABASE_URL` terminando em `_test`. O guia traz os comandos Docker para build, migrations e interface. Evidências em `docs/evidence/` fora de `mvp/` pertencem à v0.1.
