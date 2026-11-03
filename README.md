@@ -1,6 +1,6 @@
 # ImobiTech · entrega US01–US07
 
-Sistema de gestão de locações imobiliárias do Grupo 06 da Universidade Católica de Brasília. Implementa **US01–US07: autenticação, usuários, imóveis, visitas, contratos, pagamentos e consulta financeira**, com PostgreSQL real. A referência aprovada é o DRS + Arquitetura; consulte a [decisão de escopo](docs/ESCOPO_MVP.md) e a [matriz da entrega atual](docs/MATRIZ_MVP.md). Evidências da v0.1 são históricas e não substituem a matriz atual.
+Sistema de gestão de locações imobiliárias do Grupo 06 da Universidade Católica de Brasília. Implementa **US01–US07: autenticação, usuários, imóveis, visitas, contratos, pagamentos e consulta financeira**, com PostgreSQL real. A referência aprovada é o DRS + Arquitetura; consulte a [decisão de escopo](docs/ESCOPO_MVP.md), a [Visão alinhada](docs/VISAO_MVP_ALINHADA.md), a [matriz de testes](docs/MATRIZ_MVP.md) e a [matriz de rastreabilidade](docs/MATRIZ_RASTREABILIDADE_MVP.md). Evidências da v0.1 são históricas e não substituem a matriz atual.
 
 **Para avaliar a entrega sem hospedagem, comece pelo [Guia do professor](GUIA_PROFESSOR.md).** Ele explica a instalação local completa com Docker, credenciais próprias, HTTPS e roteiro de demonstração.
 

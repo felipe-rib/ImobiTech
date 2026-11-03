@@ -1,4 +1,4 @@
-# Registro de homologação — 02/11/2026
+# Registro de homologação — 02–03/11/2026
 
 Ambiente: Windows com Node 22.20.0 e PostgreSQL 17; Docker Linux com API Node 22, PostgreSQL 17, Caddy e Playwright 1.64.1. Dados de teste sintéticos. Projeto Docker isolado: `imobitech-qa`.
 
@@ -7,6 +7,7 @@ Ambiente: Windows com Node 22.20.0 e PostgreSQL 17; Docker Linux com API Node 22
 | `npm.cmd run build` | Saída 0; TypeScript backend/frontend e bundle Vite concluídos |
 | `npm.cmd test` | Saída 0; 23 testes, 23 aprovados, nenhum ignorado |
 | API Docker: `node scripts/test-in-container.mjs` | Saída 0; os mesmos 23 testes aprovados |
+| API Docker após ampliação da matriz, 03/11 | Saída 0; 25 testes, 25 aprovados, nenhum ignorado; 50 contas/sessões independentes simultâneas com p95 de 113 ms no container |
 | Migração 002 no banco QA existente | Saída 0; usuários e imóveis anteriores preservados |
 | Backup e `verify-backup.sh` | Saída 0; recuperação em banco temporário separado, removido ao final |
 | Monitor `--once` e `--report` | Uma amostra HTTP 200; não é evidência mensal |
@@ -17,6 +18,8 @@ Ambiente: Windows com Node 22.20.0 e PostgreSQL 17; Docker Linux com API Node 22
 | Verificação de credenciais locais em arquivos publicáveis | Nenhuma senha local gerada encontrada |
 
 O log `backend-docker.txt` inclui o formato `NativeCommandError` usado pelo PowerShell para mensagens informativas que o Docker envia a stderr; o processo terminou com código 0 e o resumo TAP confirma ausência de testes reprovados.
+
+O log `backend-tests.txt` registra a suíte anterior de 23 testes em Windows. Nesta sessão o PostgreSQL de teste exposto em `localhost:55432` não estava ativo, portanto a suíte ampliada foi executada integralmente no Docker, com banco de teste isolado. O arquivo `50-users.json` registra uma execução local anterior de 50 contas (p95 381 ms), enquanto o log Docker registra a repetição final (p95 113 ms). Os tempos pertencem a ambientes distintos.
 
 ## Correções durante a homologação
 

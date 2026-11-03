@@ -2,6 +2,8 @@
 
 Professor(a), esta entrega é executada **localmente**. Não é necessário contratar hospedagem, criar conta em serviços de nuvem ou usar o banco dos alunos. O repositório contém frontend, API, banco versionado, testes e instruções de instalação.
 
+Para conferir a aderência aos documentos, leia a [decisão de escopo](docs/ESCOPO_MVP.md), a [Visão alinhada](docs/VISAO_MVP_ALINHADA.md), a [matriz de testes](docs/MATRIZ_MVP.md) e a [matriz de rastreabilidade](docs/MATRIZ_RASTREABILIDADE_MVP.md). O DRS e a Arquitetura 2.1 prevalecem sobre as divergências da Visão original.
+
 ## 1. Pré-requisitos
 
 - Git, para clonar o repositório; alternativamente, baixe e extraia o ZIP pelo GitHub.

@@ -6,7 +6,7 @@ Entrega local, sem hospedagem pública. Referência documental: DRS e Arquitetur
 
 - Código completo deste repositório, incluindo `database/migrations/001_initial.sql` e `002_complete_mvp.sql`.
 - [Guia do professor](../GUIA_PROFESSOR.md), com instalação Docker/HTTPS, credenciais próprias e roteiro de demonstração de todos os perfis.
-- [Matriz atual](MATRIZ_MVP.md) e evidências em `evidence/mvp/`.
+- [Matriz de testes](MATRIZ_MVP.md), [matriz de rastreabilidade](MATRIZ_RASTREABILIDADE_MVP.md), [Visão alinhada](VISAO_MVP_ALINHADA.md), [política de dados](POLITICA_DADOS.md) e evidências em `evidence/mvp/`.
 - Os três documentos acadêmicos originais fornecidos, quando exigidos pela disciplina. Esta implementação não altera os originais nem cria uma assinatura de aprovação do professor.
 
 Não incluir `.env`, `.env.qa`, `.env.docker`, `.local`, dumps de banco, `node_modules` ou senhas na entrega. O professor gera suas credenciais com `node scripts/configure-docker.mjs`.
@@ -31,7 +31,7 @@ Operação: backup automático, restauração isolada de verificação, endpoint
 
 ## Limites da comprovação
 
-Validação final: 23 testes de backend aprovados em Windows e Docker, 8 testes de interface aprovados e 3 fluxos de compatibilidade aprovados em Chrome/Edge/Firefox. Também passaram HTTPS, teste de fumaça, desempenho e restauração de backup. Resultados detalhados na matriz e nos relatórios, sem testes ignorados nas execuções finais.
+Validação final: 25 testes de backend aprovados no Docker (23 da suíte anterior também aprovados em Windows), 8 testes de interface aprovados e 3 fluxos de compatibilidade aprovados em Chrome/Edge/Firefox. Também passaram HTTPS, teste de fumaça, desempenho e restauração de backup. Resultados detalhados na matriz e nos relatórios, sem testes ignorados nas execuções finais.
 
 As evidências são de homologação local com dados fictícios. A meta de 99% de disponibilidade mensal exige medição em um ambiente ligado continuamente; não pode ser certificada por testes executados em um dia. Pagamentos são registros manuais e não movimentam dinheiro. Chrome/Edge/Firefox são executados em Linux dentro de containers; isso não equivale a testar todos os sistemas operacionais ou dispositivos físicos.
 

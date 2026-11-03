@@ -1,0 +1,7 @@
+{
+  "at": "2026-11-02T23:45:19.962Z",
+  "users": 50,
+  "scenario": "50 contas e sessões independentes; 50 consultas simultâneas em Fastify inject com PostgreSQL real, sem camada TLS. HTTPS é verificado em teste separado.",
+  "p95Ms": 381,
+  "maxMs": 386
+}

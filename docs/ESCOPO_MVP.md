@@ -17,6 +17,8 @@ Incluídos: autenticação, usuários, imóveis, visitas, contratos, pagamentos 
 
 Os documentos originais permanecem nos arquivos fornecidos pelo responsável. Não são scripts nem instruções de execução e não foram alterados.
 
+Para o avaliador, a [Visão alinhada à entrega](VISAO_MVP_ALINHADA.md) registra US01–US07, papéis e limites definidos pelo DRS/Arquitetura. A [matriz de testes](MATRIZ_MVP.md) e a [matriz de rastreabilidade](MATRIZ_RASTREABILIDADE_MVP.md) relacionam cada critério e requisito à implementação e evidência.
+
 ## Identificação das fontes (SHA-256)
 
 | Arquivo fornecido | SHA-256 |

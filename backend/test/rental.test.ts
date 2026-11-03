@@ -366,3 +366,98 @@ test('RN007–RN014: conflitos independentes, vínculos inválidos e rollback', 
   ])
     assert.equal((await request('GET', route)).statusCode, 401);
 });
+
+test('Critérios restantes: imóvel inelegível, entradas inválidas e isolamento bilateral do financeiro', async () => {
+  const tenant2 = await new UserService(db).create({
+    name: 'Segundo Inquilino',
+    email: 'tenant2@test.example',
+    role: 'tenant',
+    password,
+  });
+  const login = await request('POST', '/auth/login', undefined, {
+    email: tenant2.email,
+    password,
+  });
+  assert.equal(login.statusCode, 200, login.body);
+  cookies.tenant2 = String(login.headers['set-cookie']).split(';')[0];
+  const p = await request('POST', '/properties', 'admin', property(owner2Id));
+  assert.equal(p.statusCode, 201, p.body);
+  const property2 = p.json().id;
+  const start = new Date(Date.now() + 3 * 86400000).toISOString();
+  const end = new Date(Date.now() + 3 * 86400000 + 3600000).toISOString();
+  const validVisit = {
+    property_id: property2,
+    participant_name: 'Pessoa interessada',
+    starts_at: start,
+    ends_at: end,
+  };
+  assert.equal(
+    (await request('POST', '/visits', 'broker', { ...validVisit, participant_name: '' }))
+      .statusCode,
+    400,
+  );
+  assert.equal(
+    (await request('PATCH', `/properties/${property2}`, 'admin', { status: 'unavailable' }))
+      .statusCode,
+    200,
+  );
+  assert.equal((await request('POST', '/visits', 'broker', validVisit)).statusCode, 409);
+  assert.equal(
+    (await request('PATCH', `/properties/${property2}`, 'admin', { status: 'available' }))
+      .statusCode,
+    200,
+  );
+  const year = new Date().getFullYear();
+  const contract = {
+    property_id: property2,
+    owner_id: owner2Id,
+    tenant_id: tenant2.id,
+    start_date: `${year}-01-01`,
+    end_date: `${year + 1}-12-31`,
+    monthly_rent: 1500,
+    due_day: 10,
+  };
+  assert.equal(
+    (await request('POST', '/contracts', 'admin', { ...contract, due_day: 32 })).statusCode,
+    400,
+  );
+  assert.equal(
+    (await request('POST', '/contracts', 'admin', { ...contract, end_date: `${year - 1}-12-31` }))
+      .statusCode,
+    400,
+  );
+  const created = await request('POST', '/contracts', 'admin', contract);
+  assert.equal(created.statusCode, 201, created.body);
+  const id = created.json().id;
+  assert.equal((await request('GET', `/contracts/${id}`, 'owner')).statusCode, 404);
+  assert.equal((await request('GET', `/contracts/${id}`, 'tenant')).statusCode, 404);
+  assert.equal((await request('GET', `/contracts/${id}`, 'owner2')).statusCode, 200);
+  assert.equal((await request('GET', `/contracts/${id}`, 'tenant2')).statusCode, 200);
+  assert.equal((await request('GET', `/contracts/${id}/payments`, 'owner2')).json().total, 0);
+  assert.equal((await request('GET', `/contracts/${id}/payments`, 'tenant2')).json().total, 0);
+  const payment = {
+    competence: `${year}-01`,
+    amount: 1500,
+    due_date: `${year}-01-10`,
+  };
+  assert.equal(
+    (await request('POST', `/contracts/${id}/payments`, 'broker', payment)).statusCode,
+    403,
+  );
+  assert.equal(
+    (await request('POST', `/contracts/${id}/payments`, 'admin', { ...payment, amount: -1 }))
+      .statusCode,
+    400,
+  );
+  const posted = await request('POST', `/contracts/${id}/payments`, 'admin', payment);
+  assert.equal(posted.statusCode, 201, posted.body);
+  assert.equal((await request('GET', `/payments/${posted.json().id}`, 'owner')).statusCode, 404);
+  assert.equal((await request('GET', `/payments/${posted.json().id}`, 'tenant')).statusCode, 404);
+  assert.equal((await request('GET', `/payments/${posted.json().id}`, 'owner2')).statusCode, 200);
+  assert.equal((await request('GET', `/payments/${posted.json().id}`, 'tenant2')).statusCode, 200);
+  assert.equal(
+    (await request('PATCH', `/payments/${posted.json().id}`, 'tenant2', { amount: 1 })).statusCode,
+    403,
+  );
+  assert.equal((await request('GET', `/contracts/${id}/history`, 'owner2')).statusCode, 403);
+});
