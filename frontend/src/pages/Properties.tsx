@@ -1,6 +1,16 @@
-import { useEffect, useState, type ChangeEvent, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Building2, MapPin, ArrowUpRight, Images, Trash2 } from 'lucide-react';
+import {
+  ArrowLeft,
+  Building2,
+  MapPin,
+  ArrowUpRight,
+  Images,
+  Trash2,
+  X,
+  ChevronLeft,
+  ChevronRight,
+} from 'lucide-react';
 import { Alert, Badge, Field, Heading, Loading, Pagination, SearchBox } from '../components/ui';
 import { useList } from '../hooks/useList';
 import { useAuth } from '../hooks/auth';
@@ -157,42 +167,24 @@ export function PropertyDetail() {
   const { id } = useParams();
   const location = useLocation();
   const { user } = useAuth();
-  const { property: p, setProperty, error, loading } = useProperty(id);
-  const [uploading, setUploading] = useState(false);
-  const [photoMessage, setPhotoMessage] = useState('');
-  const [photoError, setPhotoError] = useState('');
-  const canUpload = user!.role === 'admin' || user!.role === 'broker';
-  async function uploadSelected(event: ChangeEvent<HTMLInputElement>) {
-    const files = Array.from(event.target.files ?? []);
-    event.target.value = '';
-    if (!id || !p || !files.length) return;
-    setPhotoMessage('');
-    setPhotoError('');
-    if (files.length + p.photos.length > 10) {
-      setPhotoError('O imóvel aceita no máximo 10 fotos.');
-      return;
-    }
-    if (files.some((file) => file.size > 5 * 1024 * 1024)) {
-      setPhotoError('Cada foto deve ter até 5 MB.');
-      return;
-    }
-    setUploading(true);
-    let uploaded = 0;
-    try {
-      for (const file of files) {
-        try {
-          const photo = await uploadPropertyPhoto(id, file);
-          setProperty((current) => current && { ...current, photos: [...current.photos, photo] });
-          uploaded++;
-        } catch (error) {
-          setPhotoError((error as Error).message);
-        }
-      }
-      if (uploaded) setPhotoMessage(`${uploaded} foto(s) enviada(s) com sucesso.`);
-    } finally {
-      setUploading(false);
-    }
-  }
+  const { property: p, error, loading } = useProperty(id);
+  const [photoIndex, setPhotoIndex] = useState<number | null>(null);
+  const closePhotoRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    if (photoIndex === null) return;
+    closePhotoRef.current?.focus();
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setPhotoIndex(null);
+      if (p?.photos.length && event.key === 'ArrowLeft')
+        setPhotoIndex((index) =>
+          index === null ? null : (index - 1 + p.photos.length) % p.photos.length,
+        );
+      if (p?.photos.length && event.key === 'ArrowRight')
+        setPhotoIndex((index) => (index === null ? null : (index + 1) % p.photos.length));
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [photoIndex, p?.photos]);
   return (
     <>
       <Link className="back" to="/properties">
@@ -201,8 +193,6 @@ export function PropertyDetail() {
       </Link>
       <Alert>{error}</Alert>
       <Alert success={!location.state?.photoError}>{location.state?.message}</Alert>
-      <Alert>{photoError}</Alert>
-      <Alert success>{photoMessage}</Alert>
       {loading ? (
         <Loading />
       ) : (
@@ -219,40 +209,25 @@ export function PropertyDetail() {
               }
             />
             <section className="detail-hero">
-              {canUpload ? (
-                <label className="detail-photo-upload">
-                  {p.photos?.[0] ? (
-                    <img
-                      className="detail-cover"
-                      src={p.photos[0].url}
-                      alt={`Foto principal de ${p.title}`}
-                    />
-                  ) : (
-                    <span className="detail-photo-placeholder">
-                      <Images size={54} />
-                      <span>Adicionar fotos</span>
-                    </span>
-                  )}
-                  <span className="detail-photo-action">
-                    {uploading ? 'Enviando fotos…' : 'Clique para adicionar fotos'}
-                  </span>
-                  <input
-                    type="file"
-                    aria-label="Adicionar fotos ao imóvel"
-                    accept="image/jpeg,image/png,image/webp"
-                    multiple
-                    disabled={uploading || p.photos.length >= 10}
-                    onChange={uploadSelected}
+              {p.photos?.[0] ? (
+                <button
+                  type="button"
+                  className="detail-cover-button"
+                  onClick={() => setPhotoIndex(0)}
+                  aria-label="Ampliar foto principal do imóvel"
+                >
+                  <img
+                    className="detail-cover"
+                    src={p.photos[0].url}
+                    alt={`Foto principal de ${p.title}`}
                   />
-                </label>
-              ) : p.photos?.[0] ? (
-                <img
-                  className="detail-cover"
-                  src={p.photos[0].url}
-                  alt={`Foto principal de ${p.title}`}
-                />
+                  <span>Ampliar foto</span>
+                </button>
               ) : (
-                <Building2 size={90} strokeWidth={1} />
+                <div className="detail-no-photo">
+                  <Building2 size={54} strokeWidth={1} />
+                  <span>Sem fotos cadastradas</span>
+                </div>
               )}
               <div>
                 <Badge active={p.status === 'available'}>
@@ -265,23 +240,74 @@ export function PropertyDetail() {
                 </h2>
               </div>
             </section>
-            {canUpload && (
-              <p className="muted small">
-                Clique na foto para escolher arquivos. O envio começa imediatamente; limite de 10
-                fotos de até 5 MB cada.
-              </p>
-            )}
             {!!p.photos?.length && (
               <section className="property-gallery" aria-label="Fotos do imóvel">
                 {p.photos.map((photo, index) => (
-                  <img
+                  <button
+                    type="button"
                     key={photo.id}
-                    src={photo.url}
-                    alt={`${p.title}, foto ${index + 1}`}
-                    loading="lazy"
-                  />
+                    onClick={() => setPhotoIndex(index)}
+                    aria-label={`Ampliar foto ${index + 1} do imóvel`}
+                  >
+                    <img src={photo.url} alt={`${p.title}, foto ${index + 1}`} loading="lazy" />
+                  </button>
                 ))}
               </section>
+            )}
+            {photoIndex !== null && p.photos[photoIndex] && (
+              <div
+                className="property-lightbox"
+                role="presentation"
+                onClick={(event) => {
+                  if (event.target === event.currentTarget) setPhotoIndex(null);
+                }}
+              >
+                <div
+                  className="property-lightbox-dialog"
+                  role="dialog"
+                  aria-modal="true"
+                  aria-label={`Foto ${photoIndex + 1} de ${p.photos.length} de ${p.title}`}
+                >
+                  <button
+                    ref={closePhotoRef}
+                    type="button"
+                    className="property-lightbox-close"
+                    onClick={() => setPhotoIndex(null)}
+                    aria-label="Fechar foto ampliada"
+                  >
+                    <X size={23} />
+                  </button>
+                  {p.photos.length > 1 && (
+                    <button
+                      type="button"
+                      className="property-lightbox-nav"
+                      onClick={() =>
+                        setPhotoIndex((photoIndex - 1 + p.photos.length) % p.photos.length)
+                      }
+                      aria-label="Foto anterior"
+                    >
+                      <ChevronLeft size={27} />
+                    </button>
+                  )}
+                  <img
+                    src={p.photos[photoIndex].url}
+                    alt={`${p.title}, foto ${photoIndex + 1} ampliada`}
+                  />
+                  {p.photos.length > 1 && (
+                    <button
+                      type="button"
+                      className="property-lightbox-nav"
+                      onClick={() => setPhotoIndex((photoIndex + 1) % p.photos.length)}
+                      aria-label="Próxima foto"
+                    >
+                      <ChevronRight size={27} />
+                    </button>
+                  )}
+                  <span className="property-lightbox-counter">
+                    {photoIndex + 1} / {p.photos.length}
+                  </span>
+                </div>
+              </div>
             )}
             <section className="panel detail-panel">
               <h2>Sobre o imóvel</h2>

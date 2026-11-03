@@ -4,7 +4,7 @@ Além dos requisitos originais US01–US07, o ImobiTech permite anexar fotos ao 
 
 ## Como usar
 
-Em **Imóveis → Novo imóvel**, clique na área **Selecionar fotos**, escolha os arquivos e salve o imóvel. O primeiro salvamento cria o cadastro e envia as fotos selecionadas. Depois disso, basta abrir o imóvel e **clicar na foto ou no espaço reservado**: ao escolher arquivos, o envio começa imediatamente. Em **Editar imóvel**, a área de fotos também envia imediatamente, sem precisar clicar em **Salvar imóvel** para as fotos. O botão **Remover** exclui uma foto já salva na hora; alterações nos demais campos continuam dependendo de **Salvar imóvel**.
+Em **Imóveis → Novo imóvel**, clique na área **Selecionar fotos**, escolha os arquivos e salve o imóvel. O primeiro salvamento cria o cadastro e envia as fotos selecionadas. Na página de detalhes, clique na foto principal ou em uma miniatura para ampliá-la; use as setas para navegar e Esc para fechar. Para adicionar mais fotos, abra **Editar imóvel**. A área de fotos da edição envia imediatamente, sem precisar clicar em **Salvar imóvel** para as fotos. O botão **Remover** exclui uma foto já salva na hora; alterações nos demais campos continuam dependendo de **Salvar imóvel**.
 
 A primeira foto aparece na listagem e todas aparecem na página de detalhes. São aceitas imagens JPEG, PNG ou WebP, com limite de **10 fotos por imóvel** e **5 MB por foto**. Um imóvel pode ser cadastrado sem fotos e receber imagens depois.
 

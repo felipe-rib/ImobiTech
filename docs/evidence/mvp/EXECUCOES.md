@@ -15,6 +15,7 @@ Ambiente: Windows com Node 22.20.0 e PostgreSQL 17; Docker Linux com API Node 22
 | Extensão de fotos: [backup](property-photos-backup.txt) | Dump restaurado em banco temporário e arquivo de fotos verificado, sem alterar dados ativos |
 | Formulário de fotos em Chrome local | Login, abertura de **Novo imóvel** e seleção de PNG pela interface passaram; sem criar imóvel de teste no banco ativo |
 | Clique para upload imediato em Chrome local | Clique na área da foto do detalhe e na área de edição abriu o seletor; PNG escolhido disparou envio e atualização visual sem salvar formulário. Imóvel/API simulados para preservar o banco ativo; cadastro novo exibiu aviso de envio após primeiro salvamento. |
+| Visualização ampliada de fotos, 03/11: [registro](property-lightbox-ui.txt) | No detalhe, clique amplia; Esc, fechar e navegação por setas aprovados. Upload disponível na edição. |
 | Migração 002 no banco QA existente | Saída 0; usuários e imóveis anteriores preservados |
 | Backup e `verify-backup.sh` | Saída 0; recuperação em banco temporário separado, removido ao final |
 | Monitor `--once` e `--report` | Uma amostra HTTP 200; não é evidência mensal |

@@ -1,0 +1,8 @@
+03/11/2026 — Chromium em container, ambiente Docker local imobitech-qa.
+Build do frontend em Docker: aprovado.
+Login como administrador e abertura de imóvel com foto real cadastrada: aprovado.
+No detalhe não há seletor de arquivo; clicar na foto principal abre imagem ampliada.
+Miniatura também abre a visualização; Esc e botão Fechar encerram o diálogo.
+Navegação por seta direita passou com uma segunda foto simulada apenas na resposta da API do navegador.
+Página Editar imóvel conserva o seletor de fotos.
+Nenhum dado do imóvel ou foto foi alterado no banco durante o teste.

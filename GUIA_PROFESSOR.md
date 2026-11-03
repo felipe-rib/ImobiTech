@@ -100,7 +100,7 @@ Em macOS/Linux, importe `imobitech-local-ca.crt` no armazenamento de confiança 
 4. Tente cadastrar um e-mail já utilizado. O sistema deve impedir duplicidade.
 5. Em **Imóveis → Novo imóvel**, informe título, tipo, endereço e selecione o proprietário cadastrado. O CEP deve conter oito dígitos, sem hífen. O imóvel começa como **Disponível**.
 6. Abra o imóvel e edite descrição ou valor; recarregue o detalhe para confirmar persistência.
-   Se desejar, selecione fotos no cadastro e salve o imóvel. Depois, clique na foto da página de detalhes ou na área de fotos da edição: a seleção é enviada imediatamente, sem salvar os outros campos. A primeira foto aparecerá na listagem e todas na página do imóvel. Veja [limites e armazenamento](docs/FOTOS_IMOVEIS.md).
+   Se desejar, selecione fotos no cadastro e salve o imóvel. No detalhe, clique na foto para ampliá-la. Para adicionar ou remover fotos depois, abra **Editar imóvel**; o envio começa ao escolher o arquivo, sem salvar os outros campos. A primeira foto aparecerá na listagem e todas na página do imóvel. Veja [limites e armazenamento](docs/FOTOS_IMOVEIS.md).
 7. Saia e entre como corretor: pode gerenciar imóveis, mas não usuários.
 8. Entre como proprietário: consulta somente os imóveis vinculados a ele e não pode editar.
 9. Entre como inquilino: possui área autenticada, sem acesso aos módulos administrativos.
