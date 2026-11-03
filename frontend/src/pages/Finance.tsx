@@ -80,6 +80,18 @@ export function Finance() {
       />
       <Alert success>{location.state?.message}</Alert>
       <Alert>{contract.error || result.error || actionError}</Alert>
+      {user?.role === 'tenant' && (
+        <p className="muted">
+          Para marcar uma parcela como paga, selecione um comprovante PDF, JPEG ou PNG no card. O
+          botão de envio será habilitado após a seleção. O administrador analisará o pagamento.
+        </p>
+      )}
+      {user?.role === 'admin' && (
+        <p className="muted">
+          O inquilino {contract.data?.tenant_name ?? 'vinculado'} envia o comprovante. Depois do
+          envio, os botões para aprovar ou recusar aparecem no card correspondente.
+        </p>
+      )}
       {result.loading ? (
         <Loading />
       ) : (
@@ -170,6 +182,11 @@ export function Finance() {
                             type="button"
                             className="button"
                             disabled={!proofFiles[p.id] || !!busyId}
+                            title={
+                              !proofFiles[p.id]
+                                ? 'Selecione um comprovante para habilitar o envio.'
+                                : undefined
+                            }
                             onClick={() => void sendProof(p.id)}
                           >
                             Marcar como pago e enviar
