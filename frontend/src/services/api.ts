@@ -59,3 +59,17 @@ export async function api<T>(path: string, options: RequestInit = {}): Promise<T
   }
   return response.status === 204 ? (undefined as T) : response.json();
 }
+
+export async function uploadPropertyPhoto(propertyId: string, file: File) {
+  const response = await fetch(`/api/properties/${propertyId}/photos`, {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: { 'Content-Type': file.type },
+    body: file,
+  });
+  if (!response.ok) {
+    const body = await response.json().catch(() => ({}));
+    throw new ApiError(response.status, body.message || 'Não foi possível enviar a foto.');
+  }
+  return response.json();
+}

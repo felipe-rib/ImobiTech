@@ -1,11 +1,11 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Building2, MapPin, ArrowUpRight } from 'lucide-react';
+import { ArrowLeft, Building2, MapPin, ArrowUpRight, Images, Trash2 } from 'lucide-react';
 import { Alert, Badge, Field, Heading, Loading, Pagination, SearchBox } from '../components/ui';
 import { useList } from '../hooks/useList';
 import { useAuth } from '../hooks/auth';
-import { api } from '../services/api';
-import { typeLabels, money, type Property } from '../types';
+import { api, uploadPropertyPhoto } from '../services/api';
+import { typeLabels, money, type Property, type PropertyPhoto } from '../types';
 const states =
   'AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO RR SC SP SE TO'.split(' ');
 export function Properties() {
@@ -86,7 +86,11 @@ export function Properties() {
                 {data.items.map((p) => (
                   <Link className="property-card" key={p.id} to={`/properties/${p.id}`}>
                     <div className="property-illustration">
-                      <Building2 size={64} strokeWidth={1} />
+                      {p.photos?.[0] ? (
+                        <img src={p.photos[0].url} alt={`Foto de ${p.title}`} loading="lazy" />
+                      ) : (
+                        <Building2 size={64} strokeWidth={1} />
+                      )}
                       <Badge active={p.status === 'available'}>
                         {p.status === 'available' ? 'Disponível' : 'Indisponível'}
                       </Badge>
@@ -151,6 +155,7 @@ function useProperty(id?: string) {
 }
 export function PropertyDetail() {
   const { id } = useParams();
+  const location = useLocation();
   const { user } = useAuth();
   const { property: p, error, loading } = useProperty(id);
   return (
@@ -160,6 +165,7 @@ export function PropertyDetail() {
         Voltar para imóveis
       </Link>
       <Alert>{error}</Alert>
+      <Alert success={!location.state?.photoError}>{location.state?.message}</Alert>
       {loading ? (
         <Loading />
       ) : (
@@ -176,7 +182,15 @@ export function PropertyDetail() {
               }
             />
             <section className="detail-hero">
-              <Building2 size={90} strokeWidth={1} />
+              {p.photos?.[0] ? (
+                <img
+                  className="detail-cover"
+                  src={p.photos[0].url}
+                  alt={`Foto principal de ${p.title}`}
+                />
+              ) : (
+                <Building2 size={90} strokeWidth={1} />
+              )}
               <div>
                 <Badge active={p.status === 'available'}>
                   {p.status === 'available' ? 'Disponível' : 'Indisponível'}
@@ -188,6 +202,18 @@ export function PropertyDetail() {
                 </h2>
               </div>
             </section>
+            {!!p.photos?.length && (
+              <section className="property-gallery" aria-label="Fotos do imóvel">
+                {p.photos.map((photo, index) => (
+                  <img
+                    key={photo.id}
+                    src={photo.url}
+                    alt={`${p.title}, foto ${index + 1}`}
+                    loading="lazy"
+                  />
+                ))}
+              </section>
+            )}
             <section className="panel detail-panel">
               <h2>Sobre o imóvel</h2>
               <p className="description">{p.description || 'Descrição não informada.'}</p>
@@ -223,8 +249,13 @@ export function PropertyForm() {
   const [owner, setOwner] = useState('');
   const [ownerLoading, setOwnerLoading] = useState(true);
   const [ownerError, setOwnerError] = useState('');
+  const [newPhotos, setNewPhotos] = useState<File[]>([]);
+  const [existingPhotos, setExistingPhotos] = useState<PropertyPhoto[]>([]);
   useEffect(() => {
-    if (p) setOwner(p.owner_id);
+    if (p) {
+      setOwner(p.owner_id);
+      setExistingPhotos(p.photos ?? []);
+    }
   }, [p]);
   useEffect(() => {
     const c = new AbortController();
@@ -259,13 +290,41 @@ export function PropertyForm() {
     setBusy(true);
     setError('');
     try {
-      await api(id ? `/properties/${id}` : '/properties', {
+      const saved = await api<Property>(id ? `/properties/${id}` : '/properties', {
         method: id ? 'PATCH' : 'POST',
         body: JSON.stringify(body),
       });
-      navigate('/properties', {
-        state: { message: id ? 'Imóvel atualizado.' : 'Imóvel cadastrado.' },
+      let failed = 0;
+      for (const photo of newPhotos) {
+        try {
+          await uploadPropertyPhoto(saved.id, photo);
+        } catch {
+          failed++;
+        }
+      }
+      navigate(`/properties/${saved.id}`, {
+        state: {
+          message: failed
+            ? `Imóvel salvo, mas ${failed} foto(s) não foram enviadas. Edite o imóvel para tentar novamente.`
+            : id
+              ? 'Imóvel atualizado.'
+              : 'Imóvel cadastrado.',
+          photoError: failed > 0,
+        },
       });
+    } catch (e) {
+      setError((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+  async function removePhoto(photoId: string) {
+    if (!id) return;
+    setBusy(true);
+    setError('');
+    try {
+      await api<void>(`/properties/${id}/photos/${photoId}`, { method: 'DELETE', body: '{}' });
+      setExistingPhotos((photos) => photos.filter((photo) => photo.id !== photoId));
     } catch (e) {
       setError((e as Error).message);
     } finally {
@@ -426,6 +485,61 @@ export function PropertyForm() {
               <p className="muted">
                 Nenhum proprietário ativo encontrado. Ajuste a busca ou solicite o cadastro ao
                 administrador.
+              </p>
+            )}
+            <h2>Fotos do imóvel</h2>
+            <p className="muted small">
+              Até 10 fotos JPEG, PNG ou WebP, com no máximo 5 MB cada. A primeira foto aparece na
+              listagem.
+            </p>
+            {!!existingPhotos.length && (
+              <div className="photo-editor" aria-label="Fotos já salvas">
+                {existingPhotos.map((photo, index) => (
+                  <div className="photo-editor-item" key={photo.id}>
+                    <img src={photo.url} alt={`Foto salva ${index + 1}`} />
+                    <button
+                      type="button"
+                      className="button secondary"
+                      disabled={busy}
+                      onClick={() => removePhoto(photo.id)}
+                      aria-label={`Remover foto ${index + 1}`}
+                    >
+                      <Trash2 size={16} /> Remover
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            <label className="photo-picker">
+              <Images size={22} />
+              <span>Selecionar fotos</span>
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                multiple
+                onChange={(e) => {
+                  const files = Array.from(e.target.files ?? []);
+                  if (files.length + existingPhotos.length > 10) {
+                    setError('Selecione no máximo 10 fotos por imóvel.');
+                    setNewPhotos([]);
+                    e.target.value = '';
+                    return;
+                  }
+                  if (files.some((file) => file.size > 5 * 1024 * 1024)) {
+                    setError('Cada foto deve ter até 5 MB.');
+                    setNewPhotos([]);
+                    e.target.value = '';
+                    return;
+                  }
+                  setError('');
+                  setNewPhotos(files);
+                }}
+              />
+            </label>
+            {!!newPhotos.length && (
+              <p className="muted small">
+                {newPhotos.length} foto(s) selecionada(s):{' '}
+                {newPhotos.map((file) => file.name).join(', ')}
               </p>
             )}
             <div className="form-actions">

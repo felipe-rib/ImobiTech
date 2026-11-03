@@ -49,3 +49,7 @@ Fonte normativa desta entrega: DRS Ajustado 2.1 e Documento de Arquitetura Ajust
 | RNF-012 | Estrutura frontend/backend/SQL; [build](evidence/build.txt) | Revisão estrutural aprovada |
 
 As evidências identificam verificações pontuais. A meta mensal de RNF-002 permanece **não comprovada**, sem alterar a implementação da funcionalidade. A [Visão alinhada](VISAO_MVP_ALINHADA.md) apresenta ao avaliador o escopo aprovado sem alterar os documentos originais.
+
+## Extensão solicitada após o DRS
+
+As [fotos de imóveis](FOTOS_IMOVEIS.md) ampliam US03 sem modificar seus critérios de aceite originais. Implementação: `backend/src/properties/photo-storage.ts`, `backend/src/properties/controller.ts`, `frontend/src/pages/Properties.tsx`, `database/migrations/003_property_photos.sql` e volume Docker `photo_data`. Teste: `backend/test/property-photos.test.ts` (FOTO-01 a FOTO-04 na [matriz](MATRIZ_MVP.md)); [execução Docker](evidence/mvp/property-photos-docker.txt). O backup agora inclui dump e arquivo de fotos correspondente.

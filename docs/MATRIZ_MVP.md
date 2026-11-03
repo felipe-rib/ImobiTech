@@ -63,6 +63,17 @@ Referência: DRS 2.1 e Arquitetura 2.1, conforme [decisão de escopo](ESCOPO_MVP
 | RNF-011 | Ator, horário, antes/depois em contrato/pagamento; edição/exclusão de eventos negadas. | `backend/test/rental.test.ts`: histórico. |
 | RNF-012 | [Build](evidence/build.txt) aprovado; frontend/backend, controller/service/repository e SQL versionado revisados. | Inspeção estrutural. |
 
+## Extensão posterior ao DRS: fotos dos imóveis
+
+| Caso | Cenário | Evidência | Resultado |
+|---|---|---|---|
+| FOTO-01 | Administrador/corretor enviam PNG válido; a foto aparece na listagem e no detalhe e permanece após reinício da API | `backend/test/property-photos.test.ts`; [log Docker](evidence/mvp/property-photos-docker.txt) | Aprovado |
+| FOTO-02 | Proprietário vinculado visualiza; proprietário alheio recebe 404; inquilino não acessa; proprietário não envia | Mesmo teste | Aprovado |
+| FOTO-03 | Conteúdo inválido, MIME divergente e arquivo acima de 5 MB são rejeitados; limite de 10 fotos aplicado | Mesmo teste | Aprovado |
+| FOTO-04 | Administrador remove foto; arquivo local e metadado deixam de ser acessíveis | Mesmo teste | Aprovado |
+
+Esta extensão foi solicitada depois do DRS/Arquitetura 2.1 e não é apresentada como critério de aceite original. A suíte ampliada passou **26/26 testes no Docker**. Os 8 testes de interface e os 3 fluxos entre navegadores citados acima foram executados antes da extensão de fotos.
+
 ## Reprodução
 
-Os testes de backend usam schemas temporários em banco de teste separado e dados fictícios. A suíte ampliada teve **25/25 aprovações no Docker**; o [log local](evidence/mvp/backend-tests.txt) corresponde à suíte anterior de 23 testes. Consulte [registro de execuções](evidence/mvp/EXECUCOES.md), [log Docker](evidence/mvp/backend-docker.txt) e [guia do professor](../GUIA_PROFESSOR.md). Execute `npm.cmd test` com `TEST_DATABASE_URL` terminando em `_test`. O guia traz os comandos Docker para build, migrations e interface. Evidências em `docs/evidence/` fora de `mvp/` pertencem à v0.1.
+Os testes de backend usam schemas temporários em banco de teste separado e dados fictícios. A suíte atual teve **26/26 aprovações no Docker**; o [log Docker anterior](evidence/mvp/backend-docker.txt) registra 25/25 antes das fotos e o [log local](evidence/mvp/backend-tests.txt) corresponde à suíte anterior de 23 testes. Consulte [registro de execuções](evidence/mvp/EXECUCOES.md), [log atual](evidence/mvp/property-photos-docker.txt) e [guia do professor](../GUIA_PROFESSOR.md). Execute `npm.cmd test` com `TEST_DATABASE_URL` terminando em `_test`. O guia traz os comandos Docker para build, migrations e interface. Evidências em `docs/evidence/` fora de `mvp/` pertencem à v0.1.

@@ -4,8 +4,8 @@ O ambiente demonstrado usa dados **fictícios**. A aplicação coleta apenas os 
 
 ## Rotina operacional
 
-- `scripts/backup.sh` gera dump na inicialização do serviço de backup e a cada 24 horas enquanto Docker estiver ligado. Guarde backups fora do repositório e limite o acesso ao operador da instalação.
-- `scripts/verify-backup.sh` restaura um dump em banco temporário para conferir integridade sem substituir o banco principal. A [evidência da homologação](evidence/mvp/restore.txt) registra uma restauração aprovada.
+- `scripts/backup.sh` gera dump do banco e arquivo de fotos na inicialização do serviço de backup e a cada 24 horas enquanto Docker estiver ligado. Guarde os dois arquivos juntos, fora do repositório, e limite o acesso ao operador da instalação.
+- `scripts/verify-backup.sh` restaura um dump em banco temporário e verifica o arquivo de fotos correspondente, sem substituir os volumes ativos. As evidências de [homologação anterior](evidence/mvp/restore.txt) e da [extensão de fotos](evidence/mvp/property-photos-backup.txt) registram verificações aprovadas.
 - Antes de atualizar migrations ou migrar dados, faça um backup e confira a restauração. A meta de disponibilidade mensal precisa de monitoramento contínuo; consulte a matriz de RNF-002.
 
 ## Encerramento da instalação de avaliação

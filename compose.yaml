@@ -28,6 +28,9 @@ services:
       ADMIN_NAME: ${ADMIN_NAME:-Administrador}
       ADMIN_EMAIL: ${ADMIN_EMAIL}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      PHOTO_STORAGE_DIR: /app/property-photos
+    volumes:
+      - photo_data:/app/property-photos
     depends_on:
       db:
         condition: service_healthy
@@ -55,6 +58,7 @@ services:
       - backups:/backups
       - ./scripts/backup.sh:/scripts/backup.sh:ro
       - ./scripts/verify-backup.sh:/scripts/verify-backup.sh:ro
+      - photo_data:/photos:ro
     entrypoint: [sh, /scripts/backup.sh]
     depends_on:
       db:
@@ -64,3 +68,4 @@ volumes:
   pgdata:
   caddy_data:
   caddy_config:
+  photo_data:

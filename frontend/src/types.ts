@@ -27,6 +27,13 @@ export interface Property {
   status: string;
   created_at: string;
   updated_at: string;
+  photos: PropertyPhoto[];
+}
+export interface PropertyPhoto {
+  id: string;
+  url: string;
+  content_type: string;
+  size_bytes: number;
 }
 export interface Page<T> {
   items: T[];

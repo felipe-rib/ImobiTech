@@ -1,6 +1,6 @@
 # ImobiTech · entrega US01–US07
 
-Sistema de gestão de locações imobiliárias do Grupo 06 da Universidade Católica de Brasília. Implementa **US01–US07: autenticação, usuários, imóveis, visitas, contratos, pagamentos e consulta financeira**, com PostgreSQL real. A referência aprovada é o DRS + Arquitetura; consulte a [decisão de escopo](docs/ESCOPO_MVP.md), a [Visão alinhada](docs/VISAO_MVP_ALINHADA.md), a [matriz de testes](docs/MATRIZ_MVP.md) e a [matriz de rastreabilidade](docs/MATRIZ_RASTREABILIDADE_MVP.md). Evidências da v0.1 são históricas e não substituem a matriz atual.
+Sistema de gestão de locações imobiliárias do Grupo 06 da Universidade Católica de Brasília. Implementa **US01–US07: autenticação, usuários, imóveis, visitas, contratos, pagamentos e consulta financeira**, com PostgreSQL real. Imóveis também podem receber [fotos salvas localmente](docs/FOTOS_IMOVEIS.md). A referência aprovada é o DRS + Arquitetura; consulte a [decisão de escopo](docs/ESCOPO_MVP.md), a [Visão alinhada](docs/VISAO_MVP_ALINHADA.md), a [matriz de testes](docs/MATRIZ_MVP.md) e a [matriz de rastreabilidade](docs/MATRIZ_RASTREABILIDADE_MVP.md). Evidências da v0.1 são históricas e não substituem a matriz atual.
 
 **Para avaliar a entrega sem hospedagem, comece pelo [Guia do professor](GUIA_PROFESSOR.md).** A instalação recomendada usa Docker, credenciais próprias e `http://localhost:5173`, sem certificado. O guia também traz a opção HTTPS e o roteiro de demonstração.
 
@@ -25,6 +25,7 @@ O acesso HTTPS descrito no guia permanece como opção de implantação. A porta
 | [Matriz de rastreabilidade](docs/MATRIZ_RASTREABILIDADE_MVP.md) | Relacionar requisitos, componentes implementados e testes. |
 | [Registro de homologação](docs/evidence/mvp/EXECUCOES.md) | Consultar comandos, resultados e evidências das execuções. |
 | [Política de dados e backups](docs/POLITICA_DADOS.md) | Conferir a rotina de backup, restauração e encerramento da instalação acadêmica. |
+| [Fotos dos imóveis](docs/FOTOS_IMOVEIS.md) | Enviar imagens, entender limites, armazenamento local e futura integração com bucket. |
 
 Os documentos acadêmicos originais fornecidos pelo responsável não foram alterados. A meta de 99% de disponibilidade mensal exige medição durante um mês e consta como **não comprovada** nas matrizes.
 

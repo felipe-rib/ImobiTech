@@ -9,6 +9,7 @@ const schema = z.object({
   APP_ORIGIN: z.url().default('http://localhost:5173'),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   SESSION_HOURS: z.coerce.number().min(1).max(24).default(8),
+  PHOTO_STORAGE_DIR: z.string().min(1).optional(),
 });
 export function getConfig() {
   const config = schema.parse(process.env);

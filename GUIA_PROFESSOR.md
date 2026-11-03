@@ -100,6 +100,7 @@ Em macOS/Linux, importe `imobitech-local-ca.crt` no armazenamento de confiança 
 4. Tente cadastrar um e-mail já utilizado. O sistema deve impedir duplicidade.
 5. Em **Imóveis → Novo imóvel**, informe título, tipo, endereço e selecione o proprietário cadastrado. O CEP deve conter oito dígitos, sem hífen. O imóvel começa como **Disponível**.
 6. Abra o imóvel e edite descrição ou valor; recarregue o detalhe para confirmar persistência.
+   Se desejar, selecione fotos no cadastro ou na edição; a primeira aparecerá na listagem e todas na página do imóvel. Veja [limites e armazenamento](docs/FOTOS_IMOVEIS.md).
 7. Saia e entre como corretor: pode gerenciar imóveis, mas não usuários.
 8. Entre como proprietário: consulta somente os imóveis vinculados a ele e não pode editar.
 9. Entre como inquilino: possui área autenticada, sem acesso aos módulos administrativos.
@@ -116,7 +117,7 @@ A entrega segue o DRS e a Arquitetura, conforme [decisão de escopo](docs/ESCOPO
 
 ## Backup diário e restauração de verificação
 
-O serviço `backup` gera um dump ao iniciar e a cada 24 horas enquanto o Docker estiver funcionando. Os arquivos ficam no volume `backups`, separados do volume do banco. Computador desligado não executa tarefas; ao reiniciar, um novo backup é gerado. Verifique:
+O serviço `backup` gera um dump do banco e um arquivo de fotos ao iniciar e a cada 24 horas enquanto o Docker estiver funcionando. Os arquivos ficam no volume `backups`, separados dos volumes do banco e das fotos. Computador desligado não executa tarefas; ao reiniciar, um novo backup é gerado. Verifique:
 
 ```powershell
 docker compose --env-file .env.docker -p imobitech-professor logs backup

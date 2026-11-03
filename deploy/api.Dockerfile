@@ -8,6 +8,7 @@ COPY backend backend
 COPY database database
 COPY scripts/test-in-container.mjs scripts/test-in-container.mjs
 RUN npm run build -w backend
+RUN mkdir -p /app/property-photos && chown node:node /app/property-photos
 ENV NODE_ENV=production
 USER node
 EXPOSE 3000
