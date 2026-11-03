@@ -1,0 +1,23 @@
+# Acesso de demonstração sem certificado, somente em 127.0.0.1:5173.
+# Reutiliza o banco do projeto Docker escolhido (-p) sem alterar os serviços HTTPS.
+services:
+  local-api:
+    image: imobitech-qa-api:latest
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: ${DATABASE_URL:?Defina DATABASE_URL com host db para Docker}
+      NODE_ENV: development
+      HOST: 0.0.0.0
+      PORT: 3000
+      APP_ORIGIN: http://localhost:5173
+      SESSION_HOURS: ${SESSION_HOURS:-8}
+    depends_on:
+      db:
+        condition: service_healthy
+  local-web:
+    image: imobitech-qa-web:latest
+    restart: unless-stopped
+    ports: ['127.0.0.1:5173:80']
+    volumes:
+      - ./deploy/Caddyfile.local:/etc/caddy/Caddyfile:ro
+    depends_on: [local-api]

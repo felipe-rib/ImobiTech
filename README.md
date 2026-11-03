@@ -4,6 +4,14 @@ Sistema de gestão de locações imobiliárias do Grupo 06 da Universidade Cató
 
 **Para avaliar a entrega sem hospedagem, comece pelo [Guia do professor](GUIA_PROFESSOR.md).** Ele explica a instalação local completa com Docker, credenciais próprias, HTTPS e roteiro de demonstração.
 
+**Teste rápido nesta máquina:** abra [http://localhost:5173](http://localhost:5173). Essa porta usa HTTP apenas em `127.0.0.1`, sem instalação de certificado, e compartilha o banco da instalação local de homologação. O login do administrador está no arquivo `.env.qa` desta máquina. Se o Docker tiver sido desligado, execute:
+
+```powershell
+docker compose --env-file .env.qa -p imobitech-qa -f compose.yaml -f compose.qa.yaml -f compose.local.yaml up -d local-api local-web
+```
+
+O acesso HTTPS descrito no guia permanece como opção de implantação. A porta 5173 serve apenas para desenvolvimento e demonstração local.
+
 ## Documentação da entrega
 
 | Documento | Para que serve |
