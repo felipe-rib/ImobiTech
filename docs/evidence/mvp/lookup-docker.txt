@@ -1,0 +1,185 @@
+> imobitech@0.1.0 test
+> npm run test -w backend
+
+
+> @imobitech/backend@0.1.0 test
+> tsx --test test/*.test.ts
+
+TAP version 13
+# 50 usuários autenticados: p95 87ms; máximo 88ms
+# Subtest: RNF001 e arquitetura: cinquenta usuários distintos autenticados consultam simultaneamente
+ok 1 - RNF001 e arquitetura: cinquenta usuários distintos autenticados consultam simultaneamente
+  ---
+  duration_ms: 11959.858262
+  type: 'test'
+  ...
+# Subtest: T1.01 / T1.02: quatro perfis autenticam e recebem somente dados públicos
+ok 2 - T1.01 / T1.02: quatro perfis autenticam e recebem somente dados públicos
+  ---
+  duration_ms: 2880.1052
+  type: 'test'
+  ...
+# Subtest: T1.03 / T1.04: credenciais inválidas e inativo retornam erro genérico idêntico
+ok 3 - T1.03 / T1.04: credenciais inválidas e inativo retornam erro genérico idêntico
+  ---
+  duration_ms: 318.406288
+  type: 'test'
+  ...
+# Subtest: T1.05: administrador cadastra usuário e persiste no PostgreSQL
+ok 4 - T1.05: administrador cadastra usuário e persiste no PostgreSQL
+  ---
+  duration_ms: 144.982575
+  type: 'test'
+  ...
+# Subtest: T1.06 / T1.07: atualização e perfil persistem; sessão anterior é revogada
+ok 5 - T1.06 / T1.07: atualização e perfil persistem; sessão anterior é revogada
+  ---
+  duration_ms: 288.40454
+  type: 'test'
+  ...
+# Subtest: T1.08 / T1.15: rotas protegidas retornam 401 e perfis sem permissão recebem 403
+ok 6 - T1.08 / T1.15: rotas protegidas retornam 401 e perfis sem permissão recebem 403
+  ---
+  duration_ms: 70.498409
+  type: 'test'
+  ...
+# Subtest: T1.09: e-mail e identificador únicos; perfil inválido e campos extras rejeitados
+ok 7 - T1.09: e-mail e identificador únicos; perfil inválido e campos extras rejeitados
+  ---
+  duration_ms: 320.483212
+  type: 'test'
+  ...
+# Subtest: T1.10 / T1.13: corretor cria imóvel com situação Disponível e vínculo real
+ok 8 - T1.10 / T1.13: corretor cria imóvel com situação Disponível e vínculo real
+  ---
+  duration_ms: 18.342145
+  type: 'test'
+  ...
+# Subtest: T1.11: alteração do imóvel persiste e aparece na consulta
+ok 9 - T1.11: alteração do imóvel persiste e aparece na consulta
+  ---
+  duration_ms: 17.998336
+  type: 'test'
+  ...
+# Subtest: T1.12: proprietário obrigatório, existente, ativo e com perfil correto
+ok 10 - T1.12: proprietário obrigatório, existente, ativo e com perfil correto
+  ---
+  duration_ms: 21.647041
+  type: 'test'
+  ...
+# Subtest: T1.16: proprietário consulta somente seus imóveis e não pode editá-los
+ok 11 - T1.16: proprietário consulta somente seus imóveis e não pode editá-los
+  ---
+  duration_ms: 25.436896
+  type: 'test'
+  ...
+# Subtest: T1.17: Argon2id no banco; hashes ausentes em todas as respostas de usuários
+ok 12 - T1.17: Argon2id no banco; hashes ausentes em todas as respostas de usuários
+  ---
+  duration_ms: 85.002955
+  type: 'test'
+  ...
+# Subtest: Filtros, paginação, validação e consultas parametrizadas
+ok 13 - Filtros, paginação, validação e consultas parametrizadas
+  ---
+  duration_ms: 17.86575
+  type: 'test'
+  ...
+# Subtest: CSRF: rejeita origem externa e ausente em mutações
+ok 14 - CSRF: rejeita origem externa e ausente em mutações
+  ---
+  duration_ms: 1.973724
+  type: 'test'
+  ...
+# Subtest: Último administrador é preservado; desativação invalida sessão
+ok 15 - Último administrador é preservado; desativação invalida sessão
+  ---
+  duration_ms: 24.216822
+  type: 'test'
+  ...
+# Subtest: T1.14 parcial: cookie Secure em produção e cabeçalhos de proteção
+ok 16 - T1.14 parcial: cookie Secure em produção e cabeçalhos de proteção
+  ---
+  duration_ms: 112.104668
+  type: 'test'
+  ...
+# Subtest: Validação de campos, proprietário inativo e integridade no banco
+ok 17 - Validação de campos, proprietário inativo e integridade no banco
+  ---
+  duration_ms: 21.080095
+  type: 'test'
+  ...
+# Subtest: Expiração e logout invalidam a sessão no servidor
+ok 18 - Expiração e logout invalidam a sessão no servidor
+  ---
+  duration_ms: 40.757404
+  type: 'test'
+  ...
+# Subtest: Limite de tentativas de autenticação
+ok 19 - Limite de tentativas de autenticação
+  ---
+  duration_ms: 91.752078
+  type: 'test'
+  ...
+# Subtest: Fotos de imóveis: upload, persistência, limites, isolamento e remoção
+ok 20 - Fotos de imóveis: upload, persistência, limites, isolamento e remoção
+  ---
+  duration_ms: 3628.384513
+  type: 'test'
+  ...
+# Subtest: US04–US07: fluxo completo, concorrência, isolamento e histórico financeiro
+ok 21 - US04–US07: fluxo completo, concorrência, isolamento e histórico financeiro
+  ---
+  duration_ms: 3281.239982
+  type: 'test'
+  ...
+# Subtest: RN007–RN014: conflitos independentes, vínculos inválidos e rollback
+ok 22 - RN007–RN014: conflitos independentes, vínculos inválidos e rollback
+  ---
+  duration_ms: 581.552176
+  type: 'test'
+  ...
+# Subtest: Critérios restantes: imóvel inelegível, entradas inválidas e isolamento bilateral do financeiro
+ok 23 - Critérios restantes: imóvel inelegível, entradas inválidas e isolamento bilateral do financeiro
+  ---
+  duration_ms: 299.529275
+  type: 'test'
+  ...
+# Subtest: Busca de contrato: cadastros elegíveis aparecem sem termo e por e-mail ou endereço
+ok 24 - Busca de contrato: cadastros elegíveis aparecem sem termo e por e-mail ou endereço
+  ---
+  duration_ms: 39.245951
+  type: 'test'
+  ...
+# Subtest: PATCH não reativa usuário nem altera campos omitidos
+ok 25 - PATCH não reativa usuário nem altera campos omitidos
+  ---
+  duration_ms: 9.437102
+  type: 'test'
+  ...
+# Subtest: Cadastro exige senha forte em tamanho e perfil único
+ok 26 - Cadastro exige senha forte em tamanho e perfil único
+  ---
+  duration_ms: 4.491487
+  type: 'test'
+  ...
+# Subtest: Imóvel não aceita situação inicial enviada pelo cliente
+ok 27 - Imóvel não aceita situação inicial enviada pelo cliente
+  ---
+  duration_ms: 2.635829
+  type: 'test'
+  ...
+1..27
+# tests 27
+# suites 0
+# pass 27
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 13369.936576
+npm notice
+npm notice New major version of npm available! 10.9.9 -> 12.2.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.1
+npm notice To update run: npm install -g npm@12.2.1
+npm notice

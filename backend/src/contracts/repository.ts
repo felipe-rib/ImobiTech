@@ -61,13 +61,13 @@ export class ContractRepository {
     if (kind === 'tenants')
       return (
         await this.db.query(
-          "SELECT id,name FROM users WHERE role='tenant' AND active AND name ILIKE $1 ORDER BY name,id LIMIT 50",
+          "SELECT id,name,email FROM users WHERE role='tenant' AND active AND (name ILIKE $1 OR email ILIKE $1) ORDER BY name,id LIMIT 50",
           [`%${search}%`],
         )
       ).rows;
     return (
       await this.db.query(
-        "SELECT p.id,p.title AS name,p.owner_id,u.name AS owner_name FROM properties p JOIN users u ON u.id=p.owner_id WHERE p.status='available' AND u.active AND (p.title ILIKE $1 OR p.city ILIKE $1) ORDER BY p.title,p.id LIMIT 50",
+        "SELECT p.id,p.title AS name,p.owner_id,u.name AS owner_name FROM properties p JOIN users u ON u.id=p.owner_id WHERE p.status='available' AND u.active AND (p.title ILIKE $1 OR p.city ILIKE $1 OR p.neighborhood ILIKE $1 OR p.street ILIKE $1) ORDER BY p.title,p.id LIMIT 50",
         [`%${search}%`],
       )
     ).rows;

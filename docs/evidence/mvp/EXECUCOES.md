@@ -9,6 +9,8 @@ Ambiente: Windows com Node 22.20.0 e PostgreSQL 17; Docker Linux com API Node 22
 | API Docker: `node scripts/test-in-container.mjs` | Saída 0; os mesmos 23 testes aprovados |
 | API Docker após ampliação da matriz, 03/11 | Saída 0; 25 testes, 25 aprovados, nenhum ignorado; 50 contas/sessões independentes simultâneas com p95 de 113 ms no container |
 | Extensão de fotos, 03/11: [suíte Docker](property-photos-docker.txt) | Saída 0; 26 testes, 26 aprovados, nenhum ignorado; upload, leitura, isolamento, limites, remoção e reinício da API |
+| Busca em contrato e visita, 03/11: [suíte Docker](lookup-docker.txt) | Saída 0; 27 testes, 27 aprovados; opções elegíveis sem termo, busca por e-mail e endereço, exclusão de imóvel indisponível e controle de acesso |
+| Busca em contrato e visita: [Chrome local](lookup-ui.txt) | Cadastros visíveis e selecionáveis; busca por e-mail e imóvel disponível em visita confirmados na interface |
 | Extensão de fotos: [backup](property-photos-backup.txt) | Dump restaurado em banco temporário e arquivo de fotos verificado, sem alterar dados ativos |
 | Formulário de fotos em Chrome local | Login, abertura de **Novo imóvel** e seleção de PNG pela interface passaram; sem criar imóvel de teste no banco ativo |
 | Clique para upload imediato em Chrome local | Clique na área da foto do detalhe e na área de edição abriu o seletor; PNG escolhido disparou envio e atualização visual sem salvar formulário. Imóvel/API simulados para preservar o banco ativo; cadastro novo exibiu aviso de envio após primeiro salvamento. |

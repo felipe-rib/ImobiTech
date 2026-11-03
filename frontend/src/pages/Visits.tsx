@@ -197,6 +197,7 @@ export function VisitForm() {
           path="/properties?status=available"
           value={property}
           onSelect={setProperty}
+          emptyMessage="Nenhum imóvel disponível. Cadastre um imóvel ou confira sua situação."
         />
         <Field label="Participante interessado *">
           <input name="participant_name" required minLength={3} maxLength={120} />

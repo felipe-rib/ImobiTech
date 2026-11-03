@@ -73,8 +73,18 @@ Referência: DRS 2.1 e Arquitetura 2.1, conforme [decisão de escopo](ESCOPO_MVP
 | FOTO-04 | Administrador remove foto; arquivo local e metadado deixam de ser acessíveis | Mesmo teste | Aprovado |
 | FOTO-05 | Clique na foto do detalhe ou na área de edição abre o seletor e inicia o envio ao escolher arquivos; no cadastro novo, a seleção aguarda o primeiro salvamento | Verificação em Chrome local com imóvel/API simulados; backend real coberto em FOTO-01–04 | Aprovado |
 
-Esta extensão foi solicitada depois do DRS/Arquitetura 2.1 e não é apresentada como critério de aceite original. A suíte ampliada passou **26/26 testes no Docker**. Os 8 testes de interface e os 3 fluxos entre navegadores citados acima foram executados antes da extensão de fotos.
+Esta extensão foi solicitada depois do DRS/Arquitetura 2.1 e não é apresentada como critério de aceite original. A suíte atual passou **27/27 testes no Docker**. Os 8 testes de interface e os 3 fluxos entre navegadores citados acima foram executados antes da extensão de fotos.
+
+## Busca nos formulários de contrato e visita
+
+| Caso | Cenário | Evidência | Resultado |
+|---|---|---|---|
+| BUSCA-01 | Imóveis disponíveis e inquilinos cadastrados aparecem imediatamente como opções selecionáveis no novo contrato | `backend/test/rental.test.ts`; [suíte Docker](evidence/mvp/lookup-docker.txt); [verificação no Chrome](evidence/mvp/lookup-ui.txt) | Aprovado |
+| BUSCA-02 | Busca de inquilino por e-mail e de imóvel por endereço retorna cadastros elegíveis; imóvel indisponível não aparece | Mesma suíte e verificação de interface | Aprovado |
+| BUSCA-03 | Imóvel disponível cadastrado aparece como opção em Agendar visita | [Verificação no Chrome](evidence/mvp/lookup-ui.txt) | Aprovado |
+
+Esta melhoria de usabilidade foi solicitada após a matriz original.
 
 ## Reprodução
 
-Os testes de backend usam schemas temporários em banco de teste separado e dados fictícios. A suíte atual teve **26/26 aprovações no Docker**; o [log Docker anterior](evidence/mvp/backend-docker.txt) registra 25/25 antes das fotos e o [log local](evidence/mvp/backend-tests.txt) corresponde à suíte anterior de 23 testes. Consulte [registro de execuções](evidence/mvp/EXECUCOES.md), [log atual](evidence/mvp/property-photos-docker.txt) e [guia do professor](../GUIA_PROFESSOR.md). Execute `npm.cmd test` com `TEST_DATABASE_URL` terminando em `_test`. O guia traz os comandos Docker para build, migrations e interface. Evidências em `docs/evidence/` fora de `mvp/` pertencem à v0.1.
+Os testes de backend usam schemas temporários em banco de teste separado e dados fictícios. A suíte atual teve **27/27 aprovações no Docker**; o [log Docker anterior](evidence/mvp/backend-docker.txt) registra 25/25 antes das fotos e o [log local](evidence/mvp/backend-tests.txt) corresponde à suíte anterior de 23 testes. Consulte [registro de execuções](evidence/mvp/EXECUCOES.md), [log atual](evidence/mvp/lookup-docker.txt) e [guia do professor](../GUIA_PROFESSOR.md). Execute `npm.cmd test` com `TEST_DATABASE_URL` terminando em `_test`. O guia traz os comandos Docker para build, migrations e interface. Evidências em `docs/evidence/` fora de `mvp/` pertencem à v0.1.

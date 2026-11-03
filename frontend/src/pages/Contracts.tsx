@@ -189,12 +189,14 @@ export function ContractForm() {
                     path="/contracts/options?kind=properties"
                     value={property}
                     onSelect={setProperty}
+                    emptyMessage="Nenhum imóvel disponível. Cadastre um imóvel ou confira sua situação."
                   />
                   <Lookup
                     label="Inquilino"
                     path="/contracts/options?kind=tenants"
                     value={tenant}
                     onSelect={setTenant}
+                    emptyMessage="Nenhum inquilino ativo cadastrado. Cadastre um em Usuários."
                   />
                 </div>
                 {property && (

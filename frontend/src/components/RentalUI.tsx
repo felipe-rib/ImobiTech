@@ -1,29 +1,37 @@
-import { useEffect, useId, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { api } from '../services/api';
 import { Alert, Field } from './ui';
-export type Option = { id: string; name: string; owner_id?: string; owner_name?: string };
+export type Option = {
+  id: string;
+  name: string;
+  email?: string;
+  owner_id?: string;
+  owner_name?: string;
+};
 export function Lookup({
   label,
   path,
   onSelect,
   value,
   required = true,
+  emptyMessage = 'Nenhum registro elegível cadastrado.',
 }: {
   label: string;
   path: string;
   onSelect: (option: Option | null) => void;
   value: Option | null;
   required?: boolean;
+  emptyMessage?: string;
 }) {
   const [search, setSearch] = useState(''),
     [options, setOptions] = useState<Option[]>([]),
     [error, setError] = useState(''),
     [busy, setBusy] = useState(false);
-  const id = useId();
   useEffect(() => {
     const c = new AbortController();
     setBusy(true);
     setError('');
+    setOptions([]);
     const timer = setTimeout(() => {
       api<Option[] | { items: { id: string; title: string }[] }>(
         `${path}${path.includes('?') ? '&' : '?'}search=${encodeURIComponent(search)}`,
@@ -53,35 +61,51 @@ export function Lookup({
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           maxLength={100}
-          placeholder="Digite parte do nome para pesquisar"
+          placeholder="Digite para filtrar ou escolha abaixo"
         />
       </Field>
-      <label className="field" htmlFor={id}>
-        <span>{label} *</span>
-        <select
-          id={id}
-          required={required}
-          value={value?.id ?? ''}
-          onChange={(e) => onSelect(options.find((o) => o.id === e.target.value) ?? null)}
-        >
-          <option value="">Selecione</option>
-          {value && !options.some((o) => o.id === value.id) && (
-            <option value={value.id}>{value.name}</option>
-          )}
-          {options.map((o) => (
-            <option key={o.id} value={o.id}>
-              {o.name}
-            </option>
+      <p className="muted small" role="status">
+        {busy
+          ? 'Carregando cadastros…'
+          : options.length
+            ? `${options.length} opção(ões) encontrada(s). Clique para selecionar.`
+            : search
+              ? 'Nenhum resultado para esta busca.'
+              : emptyMessage}
+      </p>
+      {!busy && !!options.length && (
+        <div className="lookup-options" aria-label={`${label} cadastrados`}>
+          {options.map((option) => (
+            <button
+              key={option.id}
+              type="button"
+              className={`lookup-option${value?.id === option.id ? ' is-selected' : ''}`}
+              aria-pressed={value?.id === option.id}
+              onClick={() => onSelect(option)}
+            >
+              <strong>{option.name}</strong>
+              {(option.email || option.owner_name) && (
+                <small>{option.email || `Proprietário: ${option.owner_name}`}</small>
+              )}
+            </button>
           ))}
-        </select>
-        <small>
-          {busy
-            ? 'Buscando opções…'
-            : options.length
-              ? 'Refine a busca se a opção não aparecer.'
-              : 'Nenhum registro elegível encontrado.'}
-        </small>
-      </label>
+        </div>
+      )}
+      {value && (
+        <p className="lookup-selected">
+          {label} selecionado: <strong>{value.name}</strong>
+          <button
+            type="button"
+            onClick={() => onSelect(null)}
+            aria-label={`Limpar ${label.toLowerCase()}`}
+          >
+            Limpar
+          </button>
+        </p>
+      )}
+      {required && !value && (
+        <p className="muted small">Selecione uma das opções para continuar.</p>
+      )}
       <Alert>{error}</Alert>
     </div>
   );

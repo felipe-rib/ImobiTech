@@ -461,3 +461,44 @@ test('Critérios restantes: imóvel inelegível, entradas inválidas e isolament
   );
   assert.equal((await request('GET', `/contracts/${id}/history`, 'owner2')).statusCode, 403);
 });
+
+test('Busca de contrato: cadastros elegíveis aparecem sem termo e por e-mail ou endereço', async () => {
+  const created = await request('POST', '/properties', 'admin', {
+    ...property(ownerId),
+    title: 'Casa disponível para busca',
+  });
+  assert.equal(created.statusCode, 201, created.body);
+  const propertyId = created.json().id;
+  const tenants = await request('GET', '/contracts/options?kind=tenants&search=', 'admin');
+  assert.equal(tenants.statusCode, 200);
+  assert.ok(tenants.json().some((item: { id: string }) => item.id === tenantId));
+  const byEmail = await request(
+    'GET',
+    '/contracts/options?kind=tenants&search=tenant%40test.example',
+    'admin',
+  );
+  assert.equal(byEmail.statusCode, 200);
+  assert.ok(byEmail.json().some((item: { id: string }) => item.id === tenantId));
+  const properties = await request('GET', '/contracts/options?kind=properties&search=', 'admin');
+  assert.equal(properties.statusCode, 200);
+  assert.ok(properties.json().some((item: { id: string }) => item.id === propertyId));
+  const byStreet = await request(
+    'GET',
+    '/contracts/options?kind=properties&search=Rua%20de%20teste',
+    'admin',
+  );
+  assert.equal(byStreet.statusCode, 200);
+  assert.ok(byStreet.json().some((item: { id: string }) => item.id === propertyId));
+  assert.equal((await request('GET', '/contracts/options?kind=tenants', 'broker')).statusCode, 403);
+  assert.equal(
+    (await request('PATCH', `/properties/${propertyId}`, 'admin', { status: 'unavailable' }))
+      .statusCode,
+    200,
+  );
+  const unavailable = await request(
+    'GET',
+    '/contracts/options?kind=properties&search=Casa',
+    'admin',
+  );
+  assert.ok(!unavailable.json().some((item: { id: string }) => item.id === propertyId));
+});

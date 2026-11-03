@@ -33,7 +33,7 @@ Operação: backup automático, restauração isolada de verificação, endpoint
 
 ## Limites da comprovação
 
-Validação final da extensão de fotos: **26 testes de backend aprovados no Docker**, incluindo upload, validação, permissões, limites, remoção e persistência após reinício. A homologação anterior aprovou 8 testes de interface e 3 fluxos de compatibilidade em Chrome/Edge/Firefox; esses fluxos não cobrem a nova interface de fotos. Também passaram HTTPS, teste de fumaça, desempenho e restauração de backup na homologação anterior. Resultados detalhados na matriz e nos relatórios.
+Validação atual: **27 testes de backend aprovados no Docker**, incluindo fotos e busca de imóveis e inquilinos cadastrados. A seleção dessas opções nos formulários de contrato e visita também foi validada no Chrome local. A homologação anterior aprovou 8 testes de interface e 3 fluxos de compatibilidade em Chrome/Edge/Firefox; esses fluxos não cobrem a nova interface de fotos. Também passaram HTTPS, teste de fumaça, desempenho e restauração de backup na homologação anterior. Resultados detalhados na matriz e nos relatórios.
 
 As evidências são de homologação local com dados fictícios. A meta de 99% de disponibilidade mensal exige medição em um ambiente ligado continuamente; não pode ser certificada por testes executados em um dia. Pagamentos são registros manuais e não movimentam dinheiro. Chrome/Edge/Firefox são executados em Linux dentro de containers; isso não equivale a testar todos os sistemas operacionais ou dispositivos físicos.
 
