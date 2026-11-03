@@ -706,6 +706,56 @@ td {
   border-radius: 10px;
   flex: none;
 }
+.detail-photo-upload {
+  position: relative;
+  display: block;
+  width: min(44%, 360px);
+  height: 230px;
+  flex: none;
+  overflow: hidden;
+  border: 1px dashed #9cb4c8;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.detail-photo-upload .detail-cover {
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+}
+.detail-photo-upload:focus-within,
+.photo-picker:focus-within {
+  outline: 3px solid #315d80;
+  outline-offset: 2px;
+}
+.detail-photo-placeholder {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  background: #f4f8fb;
+  font-weight: 600;
+}
+.detail-photo-action {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 9px;
+  text-align: center;
+  color: white;
+  background: #102d4edd;
+  font-size: 12px;
+  font-weight: 600;
+}
+.detail-photo-upload input,
+.photo-picker input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
 .property-gallery {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -736,6 +786,7 @@ td {
   justify-content: center;
 }
 .photo-picker {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -746,9 +797,6 @@ td {
   margin: 10px 0;
   color: #315d80;
   font-weight: 600;
-}
-.photo-picker input {
-  max-width: 100%;
 }
 .detail-hero p {
   font-size: 12px;
@@ -1031,6 +1079,14 @@ td {
   .detail-cover {
     width: 100%;
     height: 210px;
+  }
+  .detail-photo-upload {
+    width: 100%;
+    height: 210px;
+  }
+  .detail-hero:has(.detail-photo-upload) {
+    flex-direction: column;
+    align-items: stretch;
   }
   .photo-picker {
     align-items: flex-start;

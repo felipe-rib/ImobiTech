@@ -71,6 +71,7 @@ Referência: DRS 2.1 e Arquitetura 2.1, conforme [decisão de escopo](ESCOPO_MVP
 | FOTO-02 | Proprietário vinculado visualiza; proprietário alheio recebe 404; inquilino não acessa; proprietário não envia | Mesmo teste | Aprovado |
 | FOTO-03 | Conteúdo inválido, MIME divergente e arquivo acima de 5 MB são rejeitados; limite de 10 fotos aplicado | Mesmo teste | Aprovado |
 | FOTO-04 | Administrador remove foto; arquivo local e metadado deixam de ser acessíveis | Mesmo teste | Aprovado |
+| FOTO-05 | Clique na foto do detalhe ou na área de edição abre o seletor e inicia o envio ao escolher arquivos; no cadastro novo, a seleção aguarda o primeiro salvamento | Verificação em Chrome local com imóvel/API simulados; backend real coberto em FOTO-01–04 | Aprovado |
 
 Esta extensão foi solicitada depois do DRS/Arquitetura 2.1 e não é apresentada como critério de aceite original. A suíte ampliada passou **26/26 testes no Docker**. Os 8 testes de interface e os 3 fluxos entre navegadores citados acima foram executados antes da extensão de fotos.
 

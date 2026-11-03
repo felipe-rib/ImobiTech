@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useState, type ChangeEvent, type FormEvent } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Building2, MapPin, ArrowUpRight, Images, Trash2 } from 'lucide-react';
 import { Alert, Badge, Field, Heading, Loading, Pagination, SearchBox } from '../components/ui';
@@ -151,13 +151,48 @@ function useProperty(id?: string) {
       });
     return () => c.abort();
   }, [id]);
-  return { property, error, loading };
+  return { property, setProperty, error, loading };
 }
 export function PropertyDetail() {
   const { id } = useParams();
   const location = useLocation();
   const { user } = useAuth();
-  const { property: p, error, loading } = useProperty(id);
+  const { property: p, setProperty, error, loading } = useProperty(id);
+  const [uploading, setUploading] = useState(false);
+  const [photoMessage, setPhotoMessage] = useState('');
+  const [photoError, setPhotoError] = useState('');
+  const canUpload = user!.role === 'admin' || user!.role === 'broker';
+  async function uploadSelected(event: ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(event.target.files ?? []);
+    event.target.value = '';
+    if (!id || !p || !files.length) return;
+    setPhotoMessage('');
+    setPhotoError('');
+    if (files.length + p.photos.length > 10) {
+      setPhotoError('O imóvel aceita no máximo 10 fotos.');
+      return;
+    }
+    if (files.some((file) => file.size > 5 * 1024 * 1024)) {
+      setPhotoError('Cada foto deve ter até 5 MB.');
+      return;
+    }
+    setUploading(true);
+    let uploaded = 0;
+    try {
+      for (const file of files) {
+        try {
+          const photo = await uploadPropertyPhoto(id, file);
+          setProperty((current) => current && { ...current, photos: [...current.photos, photo] });
+          uploaded++;
+        } catch (error) {
+          setPhotoError((error as Error).message);
+        }
+      }
+      if (uploaded) setPhotoMessage(`${uploaded} foto(s) enviada(s) com sucesso.`);
+    } finally {
+      setUploading(false);
+    }
+  }
   return (
     <>
       <Link className="back" to="/properties">
@@ -166,6 +201,8 @@ export function PropertyDetail() {
       </Link>
       <Alert>{error}</Alert>
       <Alert success={!location.state?.photoError}>{location.state?.message}</Alert>
+      <Alert>{photoError}</Alert>
+      <Alert success>{photoMessage}</Alert>
       {loading ? (
         <Loading />
       ) : (
@@ -182,7 +219,33 @@ export function PropertyDetail() {
               }
             />
             <section className="detail-hero">
-              {p.photos?.[0] ? (
+              {canUpload ? (
+                <label className="detail-photo-upload">
+                  {p.photos?.[0] ? (
+                    <img
+                      className="detail-cover"
+                      src={p.photos[0].url}
+                      alt={`Foto principal de ${p.title}`}
+                    />
+                  ) : (
+                    <span className="detail-photo-placeholder">
+                      <Images size={54} />
+                      <span>Adicionar fotos</span>
+                    </span>
+                  )}
+                  <span className="detail-photo-action">
+                    {uploading ? 'Enviando fotos…' : 'Clique para adicionar fotos'}
+                  </span>
+                  <input
+                    type="file"
+                    aria-label="Adicionar fotos ao imóvel"
+                    accept="image/jpeg,image/png,image/webp"
+                    multiple
+                    disabled={uploading || p.photos.length >= 10}
+                    onChange={uploadSelected}
+                  />
+                </label>
+              ) : p.photos?.[0] ? (
                 <img
                   className="detail-cover"
                   src={p.photos[0].url}
@@ -202,6 +265,12 @@ export function PropertyDetail() {
                 </h2>
               </div>
             </section>
+            {canUpload && (
+              <p className="muted small">
+                Clique na foto para escolher arquivos. O envio começa imediatamente; limite de 10
+                fotos de até 5 MB cada.
+              </p>
+            )}
             {!!p.photos?.length && (
               <section className="property-gallery" aria-label="Fotos do imóvel">
                 {p.photos.map((photo, index) => (
@@ -251,6 +320,7 @@ export function PropertyForm() {
   const [ownerError, setOwnerError] = useState('');
   const [newPhotos, setNewPhotos] = useState<File[]>([]);
   const [existingPhotos, setExistingPhotos] = useState<PropertyPhoto[]>([]);
+  const [photoNotice, setPhotoNotice] = useState('');
   useEffect(() => {
     if (p) {
       setOwner(p.owner_id);
@@ -331,6 +401,44 @@ export function PropertyForm() {
       setBusy(false);
     }
   }
+  async function choosePhotos(event: ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(event.target.files ?? []);
+    event.target.value = '';
+    if (!files.length) return;
+    setError('');
+    setPhotoNotice('');
+    if (files.length + existingPhotos.length > 10) {
+      setError('Selecione no máximo 10 fotos por imóvel.');
+      setNewPhotos([]);
+      return;
+    }
+    if (files.some((file) => file.size > 5 * 1024 * 1024)) {
+      setError('Cada foto deve ter até 5 MB.');
+      setNewPhotos([]);
+      return;
+    }
+    if (!id) {
+      setNewPhotos(files);
+      setPhotoNotice('Fotos selecionadas. Salve o imóvel para enviá-las.');
+      return;
+    }
+    setBusy(true);
+    let uploaded = 0;
+    try {
+      for (const file of files) {
+        try {
+          const photo = await uploadPropertyPhoto(id, file);
+          setExistingPhotos((photos) => [...photos, photo]);
+          uploaded++;
+        } catch (error) {
+          setError((error as Error).message);
+        }
+      }
+      if (uploaded) setPhotoNotice(`${uploaded} foto(s) enviada(s) e salva(s) imediatamente.`);
+    } finally {
+      setBusy(false);
+    }
+  }
   return (
     <>
       <Link className="back" to="/properties">
@@ -343,6 +451,7 @@ export function PropertyForm() {
         description="Um cadastro completo facilita a gestão do seu portfólio."
       />
       <Alert>{loadError || error}</Alert>
+      <Alert success>{photoNotice}</Alert>
       {loading ? (
         <Loading />
       ) : (
@@ -512,28 +621,20 @@ export function PropertyForm() {
             )}
             <label className="photo-picker">
               <Images size={22} />
-              <span>Selecionar fotos</span>
+              <span>
+                {busy
+                  ? 'Enviando fotos…'
+                  : id
+                    ? 'Clique para enviar fotos agora'
+                    : 'Clique para selecionar fotos'}
+              </span>
               <input
                 type="file"
+                aria-label="Selecionar fotos do imóvel"
                 accept="image/jpeg,image/png,image/webp"
                 multiple
-                onChange={(e) => {
-                  const files = Array.from(e.target.files ?? []);
-                  if (files.length + existingPhotos.length > 10) {
-                    setError('Selecione no máximo 10 fotos por imóvel.');
-                    setNewPhotos([]);
-                    e.target.value = '';
-                    return;
-                  }
-                  if (files.some((file) => file.size > 5 * 1024 * 1024)) {
-                    setError('Cada foto deve ter até 5 MB.');
-                    setNewPhotos([]);
-                    e.target.value = '';
-                    return;
-                  }
-                  setError('');
-                  setNewPhotos(files);
-                }}
+                disabled={busy || existingPhotos.length >= 10}
+                onChange={choosePhotos}
               />
             </label>
             {!!newPhotos.length && (
