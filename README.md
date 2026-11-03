@@ -4,6 +4,21 @@ Sistema de gestão de locações imobiliárias do Grupo 06 da Universidade Cató
 
 **Para avaliar a entrega sem hospedagem, comece pelo [Guia do professor](GUIA_PROFESSOR.md).** Ele explica a instalação local completa com Docker, credenciais próprias, HTTPS e roteiro de demonstração.
 
+## Documentação da entrega
+
+| Documento | Para que serve |
+|---|---|
+| [Guia do professor](GUIA_PROFESSOR.md) | Instalar o sistema localmente, criar credenciais, acessar os perfis e reproduzir os testes. |
+| [Resumo da entrega](docs/ENTREGA_MVP.md) | Conferir as funcionalidades entregues e os limites da homologação. |
+| [Decisão de escopo](docs/ESCOPO_MVP.md) | Entender por que o DRS e a Arquitetura 2.1 prevalecem nas divergências entre os documentos originais. |
+| [Visão alinhada ao MVP](docs/VISAO_MVP_ALINHADA.md) | Consultar objetivos, atores e alcance de US01–US07 conforme o escopo aprovado. |
+| [Matriz de testes](docs/MATRIZ_MVP.md) | Verificar os 20 critérios de aceite, 14 regras de negócio e 12 requisitos não funcionais, com resultados. |
+| [Matriz de rastreabilidade](docs/MATRIZ_RASTREABILIDADE_MVP.md) | Relacionar requisitos, componentes implementados e testes. |
+| [Registro de homologação](docs/evidence/mvp/EXECUCOES.md) | Consultar comandos, resultados e evidências das execuções. |
+| [Política de dados e backups](docs/POLITICA_DADOS.md) | Conferir a rotina de backup, restauração e encerramento da instalação acadêmica. |
+
+Os documentos acadêmicos originais fornecidos pelo responsável não foram alterados. A meta de 99% de disponibilidade mensal exige medição durante um mês e consta como **não comprovada** nas matrizes.
+
 ## Escopo
 
 - Administrador: gerencia usuários, imóveis, contratos e pagamentos; consulta visitas e histórico de alterações.
