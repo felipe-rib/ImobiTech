@@ -38,6 +38,9 @@ export class PaymentService {
           throw new HttpError(400, 'A competência deve pertencer à vigência do contrato.');
         const values = {
           ...data,
+          ...(data.paid_at !== undefined
+            ? { review_status: data.paid_at ? 'approved' : 'none' }
+            : {}),
           ...(data.competence ? { competence: `${data.competence}-01` } : {}),
         };
         return id ? repo.update(id, values) : repo.create({ ...values, contract_id: target });

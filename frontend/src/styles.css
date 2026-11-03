@@ -1344,3 +1344,32 @@ td {
     margin-top: 20px;
   }
 }
+.payment-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: 1rem;
+}
+.payment-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0;
+}
+.payment-card h2 {
+  font-size: 1.1rem;
+}
+.payment-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.payment-actions label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+}
+.payment-actions input {
+  max-width: 100%;
+}

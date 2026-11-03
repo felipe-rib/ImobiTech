@@ -6,7 +6,7 @@ import { Lookup, calendarDate, dateTime, stateLabels, type Option } from '../com
 import { useAuth } from '../hooks/auth';
 import { useList } from '../hooks/useList';
 import { useResource } from '../hooks/useResource';
-import { api } from '../services/api';
+import { api, uploadDocument } from '../services/api';
 import { money } from '../types';
 import type { Contract, Audit } from '../types/rental';
 
@@ -154,13 +154,19 @@ export function ContractForm() {
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const f = new FormData(event.currentTarget);
+    const document = f.get('document');
     const body = {
       start_date: f.get('start_date'),
       end_date: f.get('end_date'),
       monthly_rent: id ? Number(f.get('monthly_rent')) : Number(finalRent),
       due_day: Number(f.get('due_day')),
       ...(!id
-        ? { property_id: property?.id, owner_id: property?.owner_id, tenant_id: tenant?.id }
+        ? {
+            property_id: property?.id,
+            owner_id: property?.owner_id,
+            tenant_id: tenant?.id,
+            generate_installments: true,
+          }
         : {}),
     };
     setBusy(true);
@@ -170,11 +176,21 @@ export function ContractForm() {
         method: id ? 'PATCH' : 'POST',
         body: JSON.stringify(body),
       });
+      let documentMessage = '';
+      if (!id && document instanceof File && document.size) {
+        try {
+          await uploadDocument(`/contracts/${result.id}/document`, document);
+        } catch (uploadError) {
+          documentMessage = ` Contrato salvo, mas o documento não foi enviado: ${(uploadError as Error).message}`;
+        }
+      }
       navigate(`/contracts/${result.id}`, {
         state: {
-          message: id
-            ? 'Contrato atualizado.'
-            : 'Contrato criado. O imóvel está indisponível para nova locação.',
+          message:
+            documentMessage ||
+            (id
+              ? 'Contrato atualizado.'
+              : 'Contrato criado com parcelas mensais. O imóvel está indisponível para nova locação.'),
         },
       });
     } catch (e) {
@@ -323,6 +339,11 @@ export function ContractForm() {
                 />
               </Field>
             </div>
+            {!id && (
+              <Field label="Documento do contrato" hint="Opcional. PDF, JPEG ou PNG de até 5 MB.">
+                <input type="file" name="document" accept="application/pdf,image/jpeg,image/png" />
+              </Field>
+            )}
             <div className="form-actions">
               <Link className="button secondary" to="/contracts">
                 Cancelar
@@ -354,6 +375,18 @@ export function ContractDetail() {
     [error, setError] = useState(''),
     [showHistory, setShowHistory] = useState(false);
   const history = useResource<Audit[]>(showHistory ? `/contracts/${id}/history` : null);
+  async function attachDocument(file: File) {
+    setBusy(true);
+    setError('');
+    try {
+      await uploadDocument(`/contracts/${id}/document`, file);
+      reload();
+    } catch (uploadError) {
+      setError((uploadError as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
   async function close() {
     setBusy(true);
     setError('');
@@ -427,6 +460,30 @@ export function ContractDetail() {
                 )}
               </dl>
               <div className="action-row">
+                {c.has_document && (
+                  <a className="button secondary" href={`/api/contracts/${c.id}/document`} download>
+                    Baixar documento do contrato
+                  </a>
+                )}
+                {user?.role === 'admin' && c.status === 'active' && (
+                  <label className="field">
+                    <span>
+                      {c.has_document
+                        ? 'Substituir documento do contrato'
+                        : 'Anexar documento do contrato'}
+                    </span>
+                    <input
+                      type="file"
+                      accept="application/pdf,image/jpeg,image/png"
+                      disabled={busy}
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) void attachDocument(file);
+                      }}
+                    />
+                    <small>PDF, JPEG ou PNG de até 5 MB.</small>
+                  </label>
+                )}
                 <Link className="button" to={`/contracts/${id}/finance`}>
                   Consultar financeiro
                 </Link>

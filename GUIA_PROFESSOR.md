@@ -108,16 +108,16 @@ Em macOS/Linux, importe `imobitech-local-ca.crt` no armazenamento de confiança 
 11. Reduza a janela ou use o modo responsivo do navegador. O menu se adapta ao celular; a tabela de usuários tem rolagem interna quando necessário.
 
 12. Como corretor, acesse **Visitas → Agendar visita**. Os imóveis disponíveis cadastrados aparecem na lista; escolha um, informe participante e um intervalo futuro. Confirme e cancele a visita pela agenda. Tente cadastrar horários sobrepostos: o sistema deve impedir conflito para o mesmo imóvel ou corretor.
-13. Como administrador, acesse **Contratos → Novo contrato**. Os imóveis disponíveis e inquilinos cadastrados aparecem nas listas; selecione ambos ou busque por nome, e-mail ou endereço. O término é calculado para 12 meses após o início, o aluguel mensal vem do cadastro do imóvel e um desconto mensal opcional reduz o valor final do contrato. Informe o dia do vencimento. O proprietário vem do imóvel. Ao salvar, o imóvel fica indisponível para outro contrato ativo.
-14. No contrato, abra **Consultar financeiro → Novo lançamento**. Registre competência dentro da vigência, valor e vencimento. Deixe a data de pagamento vazia para observar Pendente ou Atrasado; depois atualize o lançamento com uma data de pagamento válida para observar Pago.
-15. Entre como proprietário e inquilino: ambos consultam apenas seus próprios contratos e lançamentos, sem botões de alteração. O corretor não acessa o financeiro.
+13. Como administrador, acesse **Contratos → Novo contrato**. Selecione imóvel e inquilino. O prazo é anual, o aluguel vem do imóvel e o desconto mensal é opcional. Informe o dia do vencimento e, se desejar, anexe um PDF, JPEG ou PNG de até 5 MB. Ao salvar, são criadas 12 parcelas. O documento também pode ser anexado ou substituído no detalhe de um contrato ativo.
+14. Em **Consultar financeiro**, as parcelas aparecem por competência. O vencimento usa o dia do contrato, limitado ao último dia dos meses mais curtos. Para contratos antigos, o administrador pode clicar em **Gerar parcelas faltantes**. Como inquilino, anexe um comprovante e clique em **Marcar como pago e enviar**. Como administrador, baixe o comprovante e escolha **Aprovar pagamento** ou **Não aprovado**. Após recusa, o inquilino pode reenviar.
+15. Proprietário e inquilino consultam apenas seus próprios contratos e lançamentos. Somente o inquilino vinculado envia comprovante; somente o administrador aprova ou recusa. O corretor não acessa o financeiro.
 16. Como administrador, abra o **Histórico de alterações** do contrato e confira autor e horário. Encerre o contrato e confirme que o imóvel volta a ficar disponível; os pagamentos permanecem consultáveis.
 
 A entrega segue o DRS e a Arquitetura, conforme [decisão de escopo](docs/ESCOPO_MVP.md). Não há dados pessoais ou imóveis pré-carregados. Use cadastros fictícios. Os pagamentos são registros manuais, sem integração bancária.
 
 ## Backup diário e restauração de verificação
 
-O serviço `backup` gera um dump do banco e um arquivo de fotos ao iniciar e a cada 24 horas enquanto o Docker estiver funcionando. Os arquivos ficam no volume `backups`, separados dos volumes do banco e das fotos. Computador desligado não executa tarefas; ao reiniciar, um novo backup é gerado. Verifique:
+O serviço `backup` gera um dump do banco e um arquivo com fotos e documentos financeiros ao iniciar e a cada 24 horas enquanto o Docker estiver funcionando. Os arquivos ficam no volume `backups`, separados dos volumes do banco e dos anexos. Computador desligado não executa tarefas; ao reiniciar, um novo backup é gerado. Verifique:
 
 ```powershell
 docker compose --env-file .env.docker -p imobitech-professor logs backup

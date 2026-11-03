@@ -1,7 +1,7 @@
 import type { Pool, PoolClient } from 'pg';
 export const paymentStatus =
   "CASE WHEN paid_at IS NOT NULL THEN 'paid' WHEN due_date < (now() AT TIME ZONE 'America/Sao_Paulo')::date THEN 'overdue' ELSE 'pending' END";
-export const paymentColumns = `id,contract_id,to_char(competence,'YYYY-MM') AS competence,amount,due_date,paid_at,created_at,updated_at,${paymentStatus} AS status`;
+export const paymentColumns = `id,contract_id,to_char(competence,'YYYY-MM') AS competence,amount,due_date,paid_at,review_status,submitted_at,(proof_key IS NOT NULL) AS has_proof,created_at,updated_at,${paymentStatus} AS status`;
 export class PaymentRepository {
   constructor(private db: Pool | PoolClient) {}
   async byId(id: string) {
@@ -13,7 +13,7 @@ export class PaymentRepository {
     const where = `WHERE contract_id=$1 AND ($2::text IS NULL OR (${paymentStatus})=$2)`;
     const items = (
       await this.db.query(
-        `SELECT ${paymentColumns} FROM payments ${where} ORDER BY competence DESC,id LIMIT 20 OFFSET $3`,
+        `SELECT ${paymentColumns} FROM payments ${where} ORDER BY competence ASC,id LIMIT 20 OFFSET $3`,
         [...args, (page - 1) * 20],
       )
     ).rows;

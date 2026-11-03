@@ -73,7 +73,7 @@ Referência: DRS 2.1 e Arquitetura 2.1, conforme [decisão de escopo](ESCOPO_MVP
 | FOTO-04 | Administrador remove foto; arquivo local e metadado deixam de ser acessíveis | Mesmo teste | Aprovado |
 | FOTO-05 | Clique na foto do detalhe ou na área de edição abre o seletor e inicia o envio ao escolher arquivos; no cadastro novo, a seleção aguarda o primeiro salvamento | Verificação em Chrome local com imóvel/API simulados; backend real coberto em FOTO-01–04 | Aprovado |
 
-Esta extensão foi solicitada depois do DRS/Arquitetura 2.1 e não é apresentada como critério de aceite original. A suíte atual passou **27/27 testes no Docker**. Os 8 testes de interface e os 3 fluxos entre navegadores citados acima foram executados antes da extensão de fotos.
+Esta extensão foi solicitada depois do DRS/Arquitetura 2.1 e não é apresentada como critério de aceite original. A suíte atual passou **28/28 testes no Docker**. Os 8 testes de interface e os 3 fluxos entre navegadores citados acima foram executados antes da extensão de fotos.
 
 ## Busca nos formulários de contrato e visita
 
@@ -97,4 +97,14 @@ O valor mensal líquido é salvo no contrato. O desconto informado na criação 
 
 ## Reprodução
 
-Os testes de backend usam schemas temporários em banco de teste separado e dados fictícios. A suíte atual teve **27/27 aprovações no Docker**; o [log Docker anterior](evidence/mvp/backend-docker.txt) registra 25/25 antes das fotos e o [log local](evidence/mvp/backend-tests.txt) corresponde à suíte anterior de 23 testes. Consulte [registro de execuções](evidence/mvp/EXECUCOES.md), [log atual](evidence/mvp/lookup-docker.txt) e [guia do professor](../GUIA_PROFESSOR.md). Execute `npm.cmd test` com `TEST_DATABASE_URL` terminando em `_test`. O guia traz os comandos Docker para build, migrations e interface. Evidências em `docs/evidence/` fora de `mvp/` pertencem à v0.1.
+### Extensão financeira solicitada após o DRS
+
+| Caso | Cenário | Evidência | Resultado |
+|---|---|---|---|
+| FIN-01 | Novo contrato gera 12 parcelas mensais; competência e vencimento seguem o mês e o dia do contrato, inclusive fevereiro | `backend/test/rental.test.ts`; [registro](evidence/mvp/finance-2026-11-03.txt) | Aprovado |
+| FIN-02 | Geração em contrato existente acrescenta somente parcelas faltantes | Mesmo teste; [registro](evidence/mvp/finance-2026-11-03.txt) | Aprovado |
+| FIN-03 | Inquilino vinculado envia comprovante; administrador recusa ou aprova; recusa admite reenvio | Mesmo teste | Aprovado |
+| FIN-04 | Documento opcional do contrato é acessível aos perfis vinculados | Mesmo teste | Aprovado |
+
+
+Os testes de backend usam schemas temporários em banco de teste separado e dados fictícios. A suíte atual teve **28/28 aprovações no Docker**; o [log Docker anterior](evidence/mvp/backend-docker.txt) registra 25/25 antes das fotos e o [log local](evidence/mvp/backend-tests.txt) corresponde à suíte anterior de 23 testes. Consulte [registro de execuções](evidence/mvp/EXECUCOES.md), [registro atual](evidence/mvp/finance-2026-11-03.txt) e [guia do professor](../GUIA_PROFESSOR.md). Execute `npm.cmd test` com `TEST_DATABASE_URL` terminando em `_test`. O guia traz os comandos Docker para build, migrations e interface. Evidências em `docs/evidence/` fora de `mvp/` pertencem à v0.1.

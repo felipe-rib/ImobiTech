@@ -1,0 +1,10 @@
+03/11/2026 — Docker local imobitech-qa.
+Build backend/frontend: aprovado.
+Suíte backend em banco separado: 28 testes, 28 aprovados, 0 falhas.
+Teste novo: 12 parcelas, vencimento em fevereiro, geração idempotente,
+comprovante PDF de inquilino, recusa, reenvio, aprovação e documento do contrato.
+Migração 004 aplicada ao banco local sem apagar cadastros.
+Contrato existente 30735ce4-8b59-4a07-9490-8b98ece562fb (Daniel):
+12 parcelas criadas, competências 2026-11 a 2027-10, vencimento dia 10,
+valor mensal R$ 3.400,00. Nenhuma foi marcada como paga.
+Chrome local como Daniel: 12 cards e 12 seletores de comprovante visíveis.

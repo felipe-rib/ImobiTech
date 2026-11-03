@@ -13,6 +13,7 @@ import { contractsController } from './contracts/controller.js';
 import { visitsController } from './visits/controller.js';
 import { paymentsController } from './payments/controller.js';
 import { MAX_PHOTO_BYTES } from './properties/photo-storage.js';
+import { MAX_DOCUMENT_BYTES } from './shared/document-storage.js';
 export async function buildApp(db: Pool, config: Config) {
   // Production API is reachable only through the single reverse proxy (no published API port).
   const app = Fastify({
@@ -30,6 +31,11 @@ export async function buildApp(db: Pool, config: Config) {
       { parseAs: 'buffer', bodyLimit: MAX_PHOTO_BYTES },
       (_req, body, done) => done(null, body),
     );
+  app.addContentTypeParser(
+    'application/pdf',
+    { parseAs: 'buffer', bodyLimit: MAX_DOCUMENT_BYTES },
+    (_req, body, done) => done(null, body),
+  );
   app.addHook('onRequest', async (req, reply) => {
     reply.header('Cache-Control', 'no-store');
     if (['POST', 'PATCH', 'PUT', 'DELETE'].includes(req.method)) {
@@ -37,13 +43,26 @@ export async function buildApp(db: Pool, config: Config) {
         throw new HttpError(403, 'Origem da requisição não autorizada.');
       const isPhotoUpload =
         req.method === 'POST' && /^\/properties\/[0-9a-f-]+\/photos$/.test(req.url);
+      const isDocumentUpload =
+        req.method === 'POST' &&
+        (/^\/contracts\/[0-9a-f-]+\/document$/.test(req.url) ||
+          /^\/payments\/[0-9a-f-]+\/proof$/.test(req.url));
       const contentType = req.headers['content-type']?.split(';')[0];
       if (
         isPhotoUpload
           ? !['image/jpeg', 'image/png', 'image/webp'].includes(contentType ?? '')
-          : contentType !== 'application/json'
+          : isDocumentUpload
+            ? !['application/pdf', 'image/jpeg', 'image/png'].includes(contentType ?? '')
+            : contentType !== 'application/json'
       )
-        throw new HttpError(415, isPhotoUpload ? 'Envie foto JPEG, PNG ou WebP.' : 'Envie JSON.');
+        throw new HttpError(
+          415,
+          isPhotoUpload
+            ? 'Envie foto JPEG, PNG ou WebP.'
+            : isDocumentUpload
+              ? 'Envie PDF, JPEG ou PNG.'
+              : 'Envie JSON.',
+        );
     }
   });
   app.setErrorHandler((error, req, reply) => {
@@ -100,8 +119,8 @@ export async function buildApp(db: Pool, config: Config) {
   authController(app, db, config);
   usersController(app, db);
   propertiesController(app, db, config);
-  contractsController(app, db);
+  contractsController(app, db, config);
   visitsController(app, db);
-  paymentsController(app, db);
+  paymentsController(app, db, config);
   return app;
 }

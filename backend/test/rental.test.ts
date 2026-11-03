@@ -30,6 +30,7 @@ const app = await buildApp(db, {
   APP_ORIGIN: origin,
   NODE_ENV: 'test',
   SESSION_HOURS: 8,
+  PHOTO_STORAGE_DIR: `/tmp/${schema}-files`,
 });
 const password = 'Integration-only-password-42';
 let adminId: string;
@@ -482,7 +483,10 @@ test('Busca de contrato: cadastros elegíveis aparecem sem termo e por e-mail ou
   const properties = await request('GET', '/contracts/options?kind=properties&search=', 'admin');
   assert.equal(properties.statusCode, 200);
   assert.ok(properties.json().some((item: { id: string }) => item.id === propertyId));
-  assert.equal(properties.json().find((item: { id: string }) => item.id === propertyId).rent, '1800.50');
+  assert.equal(
+    properties.json().find((item: { id: string }) => item.id === propertyId).rent,
+    '1800.50',
+  );
   const byStreet = await request(
     'GET',
     '/contracts/options?kind=properties&search=Rua%20de%20teste',
@@ -502,4 +506,69 @@ test('Busca de contrato: cadastros elegíveis aparecem sem termo e por e-mail ou
     'admin',
   );
   assert.ok(!unavailable.json().some((item: { id: string }) => item.id === propertyId));
+});
+
+test('Parcelas anuais, comprovante do inquilino, revisão administrativa e documento do contrato', async () => {
+  const createdProperty = await request('POST', '/properties', 'admin', property(ownerId));
+  assert.equal(createdProperty.statusCode, 201, createdProperty.body);
+  const year = new Date().getFullYear();
+  const contract = await request('POST', '/contracts', 'admin', {
+    property_id: createdProperty.json().id,
+    owner_id: ownerId,
+    tenant_id: tenantId,
+    start_date: `${year}-11-03`,
+    end_date: `${year + 1}-11-02`,
+    monthly_rent: 1800.5,
+    due_day: 31,
+    generate_installments: true,
+  });
+  assert.equal(contract.statusCode, 201, contract.body);
+  const id = contract.json().id;
+  const listed = await request('GET', `/contracts/${id}/payments`, 'tenant');
+  assert.equal(listed.statusCode, 200);
+  assert.equal(listed.json().total, 12);
+  assert.equal(listed.json().items[0].competence, `${year}-11`);
+  const february = listed
+    .json()
+    .items.find((p: { competence: string }) => p.competence === `${year + 1}-02`);
+  assert.equal(february.due_date, `${year + 1}-02-28`);
+  assert.equal(
+    (await request('POST', `/contracts/${id}/payments/generate`, 'admin', {})).json().created,
+    0,
+  );
+  const paymentId = february.id;
+  const pdf = Buffer.from('%PDF-1.4\n%%EOF\n');
+  const upload = (role: string, path: string) =>
+    app.inject({
+      method: 'POST',
+      url: path,
+      headers: { origin, cookie: cookies[role], 'content-type': 'application/pdf' },
+      payload: pdf,
+    });
+  assert.equal((await upload('owner', `/payments/${paymentId}/proof`)).statusCode, 403);
+  assert.equal((await upload('tenant2', `/payments/${paymentId}/proof`)).statusCode, 404);
+  assert.equal((await upload('admin', `/contracts/${id}/document`)).statusCode, 201);
+  assert.equal((await request('GET', `/contracts/${id}`, 'tenant')).json().has_document, true);
+  assert.equal((await request('GET', `/contracts/${id}/document`, 'tenant')).statusCode, 200);
+  assert.equal((await upload('tenant', `/payments/${paymentId}/proof`)).statusCode, 201);
+  assert.equal(
+    (await request('GET', `/payments/${paymentId}`, 'admin')).json().review_status,
+    'submitted',
+  );
+  assert.equal((await request('GET', `/payments/${paymentId}/proof`, 'admin')).statusCode, 200);
+  assert.equal(
+    (await request('POST', `/payments/${paymentId}/review`, 'admin', { decision: 'rejected' }))
+      .statusCode,
+    200,
+  );
+  assert.equal((await request('GET', `/payments/${paymentId}`, 'tenant')).json().status, 'pending');
+  assert.equal((await upload('tenant', `/payments/${paymentId}/proof`)).statusCode, 201);
+  assert.equal(
+    (await request('POST', `/payments/${paymentId}/review`, 'admin', { decision: 'approved' }))
+      .statusCode,
+    200,
+  );
+  const approved = (await request('GET', `/payments/${paymentId}`, 'tenant')).json();
+  assert.equal(approved.status, 'paid');
+  assert.equal(approved.review_status, 'approved');
 });

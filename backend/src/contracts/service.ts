@@ -1,4 +1,4 @@
-import type { Pool } from 'pg';
+import type { Pool, PoolClient } from 'pg';
 import { HttpError, type User } from '../shared/domain.js';
 import { contractCreate, contractPatch, businessToday } from '../shared/rental-validation.js';
 import { transaction } from '../shared/transaction.js';
@@ -6,7 +6,7 @@ import { ContractRepository } from './repository.js';
 export class ContractService {
   constructor(private pool: Pool) {}
   async create(body: unknown, actor: User) {
-    const data = contractCreate.parse(body);
+    const { generate_installments, ...data } = contractCreate.parse(body);
     if (data.end_date < businessToday())
       throw new HttpError(400, 'Um novo contrato ativo não pode ter vigência já encerrada.');
     return transaction(
@@ -36,7 +36,55 @@ export class ContractService {
             400,
             'Informe proprietário e inquilino ativos com os perfis corretos.',
           );
-        return new ContractRepository(client).create(data);
+        const created = await new ContractRepository(client).create(data);
+        if (generate_installments) await this.generateInstallments(client, created);
+        return created;
+      },
+      actor.id,
+    );
+  }
+  private async generateInstallments(
+    client: PoolClient,
+    contract: {
+      id: string;
+      start_date: string | Date;
+      end_date: string | Date;
+      due_day: number;
+      monthly_rent: string;
+    },
+  ) {
+    const day = (value: string | Date) =>
+      value instanceof Date ? value.toISOString().slice(0, 10) : value.slice(0, 10);
+    const start = day(contract.start_date);
+    const end = day(contract.end_date);
+    const first = new Date(`${start}T12:00:00Z`);
+    let created = 0;
+    for (let i = 0; i < 12; i++) {
+      const month = new Date(Date.UTC(first.getUTCFullYear(), first.getUTCMonth() + i, 1, 12));
+      const competence = month.toISOString().slice(0, 7);
+      if (competence > end.slice(0, 7)) break;
+      const lastDay = new Date(
+        Date.UTC(month.getUTCFullYear(), month.getUTCMonth() + 1, 0),
+      ).getUTCDate();
+      const dueDate = `${competence}-${String(Math.min(contract.due_day, lastDay)).padStart(2, '0')}`;
+      const result = await client.query(
+        `INSERT INTO payments(contract_id,competence,amount,due_date)
+         VALUES($1,$2::date,$3,$4::date) ON CONFLICT ON CONSTRAINT payments_one_per_competence DO NOTHING`,
+        [contract.id, `${competence}-01`, contract.monthly_rent, dueDate],
+      );
+      created += result.rowCount ?? 0;
+    }
+    return created;
+  }
+  async ensureInstallments(id: string, actor: User) {
+    return transaction(
+      this.pool,
+      async (client) => {
+        const contract = (
+          await client.query('SELECT * FROM contracts WHERE id=$1 FOR UPDATE', [id])
+        ).rows[0];
+        if (!contract) throw new HttpError(404, 'Contrato não encontrado.');
+        return { created: await this.generateInstallments(client, contract) };
       },
       actor.id,
     );

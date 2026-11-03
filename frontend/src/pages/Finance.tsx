@@ -5,7 +5,7 @@ import { Alert, Badge, Field, Heading, Loading, Pagination } from '../components
 import { calendarDate, stateLabels } from '../components/RentalUI';
 import { useAuth } from '../hooks/auth';
 import { useResource } from '../hooks/useResource';
-import { api } from '../services/api';
+import { api, uploadDocument } from '../services/api';
 import { money } from '../types';
 import type { Contract, Payment, PaymentPage } from '../types/rental';
 export function Finance() {
@@ -13,11 +13,60 @@ export function Finance() {
   const { user } = useAuth();
   const location = useLocation();
   const [page, setPage] = useState(1),
-    [status, setStatus] = useState('');
+    [status, setStatus] = useState(''),
+    [proofFiles, setProofFiles] = useState<Record<string, File>>({}),
+    [busyId, setBusyId] = useState(''),
+    [actionError, setActionError] = useState('');
   const contract = useResource<Contract>(`/contracts/${id}`);
   const result = useResource<PaymentPage>(
     `/contracts/${id}/payments?page=${page}${status ? `&status=${status}` : ''}`,
   );
+  async function sendProof(paymentId: string) {
+    const file = proofFiles[paymentId];
+    if (!file) return;
+    setBusyId(paymentId);
+    setActionError('');
+    try {
+      await uploadDocument(`/payments/${paymentId}/proof`, file);
+      setProofFiles((old) => {
+        const next = { ...old };
+        delete next[paymentId];
+        return next;
+      });
+      result.reload();
+    } catch (error) {
+      setActionError((error as Error).message);
+    } finally {
+      setBusyId('');
+    }
+  }
+  async function review(paymentId: string, decision: 'approved' | 'rejected') {
+    setBusyId(paymentId);
+    setActionError('');
+    try {
+      await api(`/payments/${paymentId}/review`, {
+        method: 'POST',
+        body: JSON.stringify({ decision }),
+      });
+      result.reload();
+    } catch (error) {
+      setActionError((error as Error).message);
+    } finally {
+      setBusyId('');
+    }
+  }
+  async function generate() {
+    setBusyId('generate');
+    setActionError('');
+    try {
+      await api(`/contracts/${id}/payments/generate`, { method: 'POST', body: '{}' });
+      result.reload();
+    } catch (error) {
+      setActionError((error as Error).message);
+    } finally {
+      setBusyId('');
+    }
+  }
   return (
     <>
       <Link className="back" to="/finance">
@@ -28,14 +77,9 @@ export function Finance() {
         eyebrow="FINANCEIRO"
         title={contract.data?.property_title ?? 'Lançamentos do contrato'}
         description="Consulte os pagamentos registrados e os vencimentos desta locação."
-        action={
-          user?.role === 'admin'
-            ? { to: `/contracts/${id}/payments/new`, label: 'Novo lançamento' }
-            : undefined
-        }
       />
       <Alert success>{location.state?.message}</Alert>
-      <Alert>{contract.error || result.error}</Alert>
+      <Alert>{contract.error || result.error || actionError}</Alert>
       {result.loading ? (
         <Loading />
       ) : (
@@ -73,11 +117,21 @@ export function Finance() {
                 <Link className="text-link" to={`/contracts/${id}`}>
                   Ver contrato
                 </Link>
+                {user?.role === 'admin' && (
+                  <button
+                    type="button"
+                    className="button secondary"
+                    disabled={!!busyId}
+                    onClick={() => void generate()}
+                  >
+                    Gerar parcelas faltantes
+                  </button>
+                )}
               </div>
               {result.data.items.length ? (
-                <div className="rental-list">
+                <div className="payment-grid">
                   {result.data.items.map((p) => (
-                    <article className="rental-row" key={p.id}>
+                    <article className="panel payment-card" key={p.id}>
                       <div>
                         <Badge active={p.status === 'paid'}>{stateLabels[p.status]}</Badge>
                         <h2>
@@ -89,11 +143,63 @@ export function Finance() {
                             ? `Pago em ${calendarDate(p.paid_at)}`
                             : 'Sem pagamento registrado.'}
                         </p>
+                        <p className="small">
+                          {p.review_status === 'submitted'
+                            ? 'Comprovante enviado — aguardando análise.'
+                            : p.review_status === 'rejected'
+                              ? 'Pagamento não aprovado. Envie outro comprovante.'
+                              : p.review_status === 'approved'
+                                ? 'Pagamento aprovado pelo administrador.'
+                                : 'Aguardando pagamento.'}
+                        </p>
                       </div>
-                      {user?.role === 'admin' && (
-                        <Link className="button secondary" to={`/payments/${p.id}/edit`}>
-                          Atualizar lançamento
-                        </Link>
+                      {user?.role === 'tenant' && !p.paid_at && p.review_status !== 'submitted' && (
+                        <div className="payment-actions">
+                          <label>
+                            Comprovante (PDF, JPEG ou PNG)
+                            <input
+                              type="file"
+                              accept="application/pdf,image/jpeg,image/png"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) setProofFiles((old) => ({ ...old, [p.id]: file }));
+                              }}
+                            />
+                          </label>
+                          <button
+                            type="button"
+                            className="button"
+                            disabled={!proofFiles[p.id] || !!busyId}
+                            onClick={() => void sendProof(p.id)}
+                          >
+                            Marcar como pago e enviar
+                          </button>
+                        </div>
+                      )}
+                      {p.has_proof && user?.role !== 'owner' && (
+                        <a className="text-link" href={`/api/payments/${p.id}/proof`} download>
+                          Baixar comprovante
+                        </a>
+                      )}
+                      {user?.role === 'admin' && p.review_status === 'submitted' && (
+                        <div className="payment-actions">
+                          <button
+                            type="button"
+                            className="button"
+                            disabled={!!busyId}
+                            onClick={() => void review(p.id, 'approved')}
+                          >
+                            Aprovar pagamento
+                          </button>
+                          <button
+                            type="button"
+                            className="button secondary"
+                            disabled={!!busyId}
+                            onClick={() => void review(p.id, 'rejected')}
+                          >
+                            Não aprovado
+                          </button>
+                        </div>
                       )}
                     </article>
                   ))}

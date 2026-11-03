@@ -1,7 +1,7 @@
 import type { Pool, PoolClient } from 'pg';
 import type { User } from '../shared/domain.js';
 export type RentalQuery = { search: string; page: number; status?: string };
-export const contractSelect = `SELECT c.*,p.title AS property_title,o.name AS owner_name,t.name AS tenant_name
+export const contractSelect = `SELECT c.id,c.property_id,c.owner_id,c.tenant_id,c.start_date,c.end_date,c.monthly_rent,c.due_day,c.status,c.closed_at,c.created_at,c.updated_at,(c.document_key IS NOT NULL) AS has_document,p.title AS property_title,o.name AS owner_name,t.name AS tenant_name
  FROM contracts c JOIN properties p ON p.id=c.property_id JOIN users o ON o.id=c.owner_id JOIN users t ON t.id=c.tenant_id`;
 export function contractScope(user: User) {
   return {

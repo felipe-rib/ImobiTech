@@ -73,3 +73,16 @@ export async function uploadPropertyPhoto(propertyId: string, file: File) {
   }
   return response.json();
 }
+export async function uploadDocument(path: string, file: File) {
+  const response = await fetch(`/api${path}`, {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: { 'Content-Type': file.type },
+    body: file,
+  });
+  if (!response.ok) {
+    const body = await response.json().catch(() => ({}));
+    throw new ApiError(response.status, body.message || 'Não foi possível enviar o documento.');
+  }
+  return response.json();
+}

@@ -9,6 +9,7 @@ export interface Contract {
   start_date: string;
   end_date: string;
   monthly_rent: string;
+  has_document?: boolean;
   due_day: number;
   status: 'active' | 'closed';
   closed_at: string | null;
@@ -22,6 +23,9 @@ export interface Payment {
   amount: string;
   due_date: string;
   paid_at: string | null;
+  review_status: 'none' | 'submitted' | 'approved' | 'rejected';
+  has_proof: boolean;
+  submitted_at: string | null;
   status: 'paid' | 'pending' | 'overdue';
   created_at: string;
   updated_at: string;

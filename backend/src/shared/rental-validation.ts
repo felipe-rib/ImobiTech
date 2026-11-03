@@ -29,6 +29,7 @@ export const contractCreate = z
     end_date: dateOnly,
     monthly_rent: money,
     due_day: z.number().int().min(1).max(31),
+    generate_installments: z.boolean().optional(),
   })
   .strict()
   .refine((v) => v.end_date >= v.start_date, {
