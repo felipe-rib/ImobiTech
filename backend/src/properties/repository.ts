@@ -58,7 +58,7 @@ export class PropertyRepository {
   async owners(search: string) {
     return (
       await this.db.query(
-        "SELECT id,name FROM users WHERE role='owner' AND active AND name ILIKE $1 ORDER BY name,id LIMIT 50",
+        "SELECT id,name FROM users WHERE role='owner' AND active AND name ILIKE $1 ORDER BY name,id",
         [`%${search}%`],
       )
     ).rows;

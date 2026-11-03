@@ -340,7 +340,6 @@ export function PropertyForm() {
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
   const [owners, setOwners] = useState<{ id: string; name: string }[]>([]);
-  const [search, setSearch] = useState('');
   const [owner, setOwner] = useState('');
   const [ownerLoading, setOwnerLoading] = useState(true);
   const [ownerError, setOwnerError] = useState('');
@@ -357,11 +356,7 @@ export function PropertyForm() {
     const c = new AbortController();
     setOwnerLoading(true);
     setOwnerError('');
-    const timer = setTimeout(() => {
-      api<{ id: string; name: string }[]>(
-        `/properties/owners?search=${encodeURIComponent(search)}`,
-        { signal: c.signal },
-      )
+    api<{ id: string; name: string }[]>('/properties/owners', { signal: c.signal })
         .then(setOwners)
         .catch((e) => {
           if (!c.signal.aborted) setOwnerError(e.message);
@@ -369,17 +364,14 @@ export function PropertyForm() {
         .finally(() => {
           if (!c.signal.aborted) setOwnerLoading(false);
         });
-    }, 200);
     return () => {
-      clearTimeout(timer);
       c.abort();
     };
-  }, [search]);
+  }, []);
   async function submit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
     const body: Record<string, unknown> = Object.fromEntries(form);
-    delete body.owner_search;
     body.owner_id = owner;
     body.rent = body.rent === '' ? null : Number(body.rent);
     if (id && owner === p?.owner_id) delete body.owner_id;
@@ -583,19 +575,8 @@ export function PropertyForm() {
               </Field>
             </div>
             <h2>Proprietário</h2>
-            <p className="muted small">
-              Vincule um proprietário ativo já cadastrado. A busca exibe até 50 resultados.
-            </p>
+            <p className="muted small">Vincule um proprietário ativo já cadastrado.</p>
             <div className="form-grid">
-              <Field label="Buscar proprietário pelo nome">
-                <input
-                  name="owner_search"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Digite para filtrar"
-                  maxLength={100}
-                />
-              </Field>
               <Field label="Proprietário vinculado *">
                 <select required value={owner} onChange={(e) => setOwner(e.target.value)}>
                   <option value="">Selecione um proprietário</option>
@@ -618,8 +599,7 @@ export function PropertyForm() {
             <Alert>{ownerError}</Alert>
             {!ownerLoading && !ownerError && !owners.length && (
               <p className="muted">
-                Nenhum proprietário ativo encontrado. Ajuste a busca ou solicite o cadastro ao
-                administrador.
+                Nenhum proprietário ativo encontrado. Solicite o cadastro ao administrador.
               </p>
             )}
             <h2>Fotos do imóvel</h2>
