@@ -4,13 +4,34 @@ Professor(a), esta entrega é executada **localmente**. Não é necessário cont
 
 Para conferir a aderência aos documentos, leia a [decisão de escopo](docs/ESCOPO_MVP.md), a [Visão alinhada](docs/VISAO_MVP_ALINHADA.md), a [matriz de testes](docs/MATRIZ_MVP.md) e a [matriz de rastreabilidade](docs/MATRIZ_RASTREABILIDADE_MVP.md). O DRS e a Arquitetura 2.1 prevalecem sobre as divergências da Visão original.
 
+## Instalação recomendada: Docker e porta 5173
+
+Este caminho é para a **avaliação local**, sem instalar certificado e sem PostgreSQL separado no computador. Instale Node.js 22.12+ e Docker Desktop, abra o Docker Desktop e deixe a porta **5173** livre. No PowerShell, execute os comandos abaixo. Se baixou um ZIP, extraia-o e abra o terminal na pasta `ImobiTech`; nesse caso, pule apenas `git clone` e `cd`.
+
+```powershell
+git clone https://github.com/felipe-rib/ImobiTech.git
+cd ImobiTech
+node scripts/configure-docker.mjs
+docker compose --env-file .env.docker -p imobitech-professor -f compose.yaml -f compose.local.yaml build local-api local-web
+docker compose --env-file .env.docker -p imobitech-professor -f compose.yaml -f compose.local.yaml up -d db
+docker compose --env-file .env.docker -p imobitech-professor -f compose.yaml -f compose.local.yaml run --rm local-api node backend/dist/database/migrate.js
+docker compose --env-file .env.docker -p imobitech-professor -f compose.yaml -f compose.local.yaml run --rm local-api node backend/dist/database/admin.js
+docker compose --env-file .env.docker -p imobitech-professor -f compose.yaml -f compose.local.yaml up -d local-api local-web backup
+```
+
+Abra **[http://localhost:5173](http://localhost:5173)**. O sistema abre com um administrador e sem imóveis ou contratos. O arquivo `.env.docker`, criado somente no seu computador, contém `ADMIN_EMAIL` e `ADMIN_PASSWORD` para o primeiro login. O script não substitui um arquivo existente. Não publique esse arquivo. As [contas de teste da máquina do autor](docs/CONTAS_TESTE_LOCAL.md) **não** são criadas no seu clone; cadastre corretor, proprietário e inquilino na tela **Usuários**.
+
+Para confirmar que iniciou, abra `http://localhost:5173/api/health` no navegador: o resultado esperado é `{"status":"ok"}`. Se o Docker foi desligado, religue-o e execute apenas o último comando `up -d`; os dados permanecem no volume. Para parar sem apagar dados, execute `docker compose --env-file .env.docker -p imobitech-professor -f compose.yaml -f compose.local.yaml down`.
+
+O roteiro para testar as sete histórias está na seção **5**. As seções **2–4** abaixo documentam a opção HTTPS da implantação, que exige confiar numa CA local e usar as portas 80/443. A porta 5173 usa HTTP somente em `127.0.0.1` para avaliação; a verificação de HTTPS (RNF-003) está nas [evidências](docs/evidence/mvp/https.txt).
+
 ## 1. Pré-requisitos
 
 - Git, para clonar o repositório; alternativamente, baixe e extraia o ZIP pelo GitHub.
 - Node.js **22.12 ou superior**, na linha 22, com npm.
 - Docker Desktop com suporte a containers Linux, aberto e em execução.
 - Acesso à internet na primeira instalação, para baixar dependências e imagens.
-- Portas locais **80 e 443** livres. O banco e a API ficam internos à rede Docker.
+- Para a instalação recomendada, apenas a porta local **5173** livre. A opção HTTPS das seções 2–4 usa 80 e 443. O banco e a API ficam internos à rede Docker.
 
 Verifique no terminal:
 

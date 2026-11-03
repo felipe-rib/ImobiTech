@@ -2,7 +2,7 @@
 
 Sistema de gestão de locações imobiliárias do Grupo 06 da Universidade Católica de Brasília. Implementa **US01–US07: autenticação, usuários, imóveis, visitas, contratos, pagamentos e consulta financeira**, com PostgreSQL real. A referência aprovada é o DRS + Arquitetura; consulte a [decisão de escopo](docs/ESCOPO_MVP.md), a [Visão alinhada](docs/VISAO_MVP_ALINHADA.md), a [matriz de testes](docs/MATRIZ_MVP.md) e a [matriz de rastreabilidade](docs/MATRIZ_RASTREABILIDADE_MVP.md). Evidências da v0.1 são históricas e não substituem a matriz atual.
 
-**Para avaliar a entrega sem hospedagem, comece pelo [Guia do professor](GUIA_PROFESSOR.md).** Ele explica a instalação local completa com Docker, credenciais próprias, HTTPS e roteiro de demonstração.
+**Para avaliar a entrega sem hospedagem, comece pelo [Guia do professor](GUIA_PROFESSOR.md).** A instalação recomendada usa Docker, credenciais próprias e `http://localhost:5173`, sem certificado. O guia também traz a opção HTTPS e o roteiro de demonstração.
 
 **Teste rápido nesta máquina:** abra [http://localhost:5173](http://localhost:5173). Essa porta usa HTTP apenas em `127.0.0.1`, sem instalação de certificado, e compartilha o banco da instalação local de homologação. Os quatro e-mails e senhas atuais estão em [Contas de teste local](docs/CONTAS_TESTE_LOCAL.md); as credenciais anteriores do `.env.qa` não correspondem mais ao administrador desse banco. Se o Docker tiver sido desligado, execute:
 
@@ -10,13 +10,13 @@ Sistema de gestão de locações imobiliárias do Grupo 06 da Universidade Cató
 docker compose --env-file .env.qa -p imobitech-qa -f compose.yaml -f compose.qa.yaml -f compose.local.yaml up -d local-api local-web
 ```
 
-O acesso HTTPS descrito no guia permanece como opção de implantação. A porta 5173 serve apenas para desenvolvimento e demonstração local.
+O acesso HTTPS descrito no guia permanece como opção de implantação. A porta 5173 serve apenas para desenvolvimento e demonstração local. Para instalar do zero em outro computador, siga a seção **Instalação recomendada** do guia.
 
 ## Documentação da entrega
 
 | Documento | Para que serve |
 |---|---|
-| [Guia do professor](GUIA_PROFESSOR.md) | Instalar o sistema localmente, criar credenciais, acessar os perfis e reproduzir os testes. |
+| [Guia do professor](GUIA_PROFESSOR.md) | Instalar pela porta 5173 sem certificado, criar credenciais, acessar os perfis e reproduzir os testes. |
 | [Contas de teste local](docs/CONTAS_TESTE_LOCAL.md) | Entrar com cada perfil na instalação desta máquina e entender o estado inicial do banco. |
 | [Resumo da entrega](docs/ENTREGA_MVP.md) | Conferir as funcionalidades entregues e os limites da homologação. |
 | [Decisão de escopo](docs/ESCOPO_MVP.md) | Entender por que o DRS e a Arquitetura 2.1 prevalecem nas divergências entre os documentos originais. |
