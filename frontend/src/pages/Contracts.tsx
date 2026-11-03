@@ -122,15 +122,42 @@ export function ContractForm() {
   } = useResource<Contract>(id ? `/contracts/${id}` : null);
   const [property, setProperty] = useState<Option | null>(null),
     [tenant, setTenant] = useState<Option | null>(null),
+    [startDate, setStartDate] = useState(() =>
+      new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'America/Sao_Paulo',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      }).format(new Date()),
+    ),
+    [baseRent, setBaseRent] = useState(''),
+    [discount, setDiscount] = useState(''),
     [error, setError] = useState(''),
     [busy, setBusy] = useState(false);
+  const annualEnd = (start: string) => {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(start)) return '';
+    const date = new Date(`${start}T12:00:00Z`);
+    if (Number.isNaN(date.getTime())) return '';
+    date.setUTCFullYear(date.getUTCFullYear() + 1);
+    date.setUTCDate(date.getUTCDate() - 1);
+    return date.toISOString().slice(0, 10);
+  };
+  const baseCents = Math.round(Number(baseRent) * 100);
+  const discountCents = Math.round(Number(discount || 0) * 100);
+  const validRent =
+    Number.isFinite(baseCents) &&
+    baseCents > 0 &&
+    Number.isFinite(discountCents) &&
+    discountCents >= 0 &&
+    discountCents < baseCents;
+  const finalRent = validRent ? ((baseCents - discountCents) / 100).toFixed(2) : '';
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const f = new FormData(event.currentTarget);
     const body = {
       start_date: f.get('start_date'),
       end_date: f.get('end_date'),
-      monthly_rent: Number(f.get('monthly_rent')),
+      monthly_rent: id ? Number(f.get('monthly_rent')) : Number(finalRent),
       due_day: Number(f.get('due_day')),
       ...(!id
         ? { property_id: property?.id, owner_id: property?.owner_id, tenant_id: tenant?.id }
@@ -188,7 +215,11 @@ export function ContractForm() {
                     label="Imóvel disponível"
                     path="/contracts/options?kind=properties"
                     value={property}
-                    onSelect={setProperty}
+                    onSelect={(option) => {
+                      setProperty(option);
+                      setBaseRent(option?.rent ?? '');
+                      setDiscount('');
+                    }}
                     emptyMessage="Nenhum imóvel disponível. Cadastre um imóvel ou confira sua situação."
                   />
                   <Lookup
@@ -207,13 +238,64 @@ export function ContractForm() {
               </>
             )}
             <h2>Condições da locação</h2>
+            {!id && <p className="muted">Prazo anual: 12 meses a partir da data de início.</p>}
             <div className="form-grid">
               <Field label="Início da vigência *">
-                <input type="date" name="start_date" required defaultValue={c?.start_date} />
+                <input
+                  type="date"
+                  name="start_date"
+                  required
+                  value={id ? undefined : startDate}
+                  defaultValue={id ? c?.start_date : undefined}
+                  onChange={id ? undefined : (e) => setStartDate(e.target.value)}
+                />
               </Field>
               <Field label="Término da vigência *">
-                <input type="date" name="end_date" required defaultValue={c?.end_date} />
+                <input
+                  type="date"
+                  name="end_date"
+                  required
+                  readOnly={!id}
+                  value={id ? undefined : annualEnd(startDate)}
+                  defaultValue={id ? c?.end_date : undefined}
+                />
               </Field>
+              {!id && (
+                <>
+                  <Field
+                    label="Aluguel do imóvel (R$) *"
+                    hint={
+                      property?.rent
+                        ? 'Preenchido pelo cadastro do imóvel.'
+                        : 'Informe o aluguel antes de continuar.'
+                    }
+                  >
+                    <input
+                      type="number"
+                      min="0.01"
+                      max="9999999999.99"
+                      step="0.01"
+                      required
+                      value={baseRent}
+                      onChange={(e) => setBaseRent(e.target.value)}
+                    />
+                  </Field>
+                  <Field
+                    label="Desconto mensal (R$)"
+                    hint="Opcional. Aplicado ao valor mensal do contrato."
+                  >
+                    <input
+                      type="number"
+                      min="0"
+                      max="9999999999.99"
+                      step="0.01"
+                      value={discount}
+                      onChange={(e) => setDiscount(e.target.value)}
+                      placeholder="0,00"
+                    />
+                  </Field>
+                </>
+              )}
               <Field label="Valor mensal (R$) *">
                 <input
                   type="number"
@@ -222,7 +304,9 @@ export function ContractForm() {
                   max="9999999999.99"
                   step="0.01"
                   required
-                  defaultValue={c?.monthly_rent}
+                  readOnly={!id}
+                  value={id ? undefined : finalRent}
+                  defaultValue={id ? c?.monthly_rent : undefined}
                 />
               </Field>
               <Field
@@ -245,7 +329,11 @@ export function ContractForm() {
               </Link>
               <button
                 className="button"
-                disabled={busy || (!id && (!property || !tenant)) || c?.status === 'closed'}
+                disabled={
+                  busy ||
+                  (!id && (!property || !tenant || !validRent || !annualEnd(startDate))) ||
+                  c?.status === 'closed'
+                }
               >
                 {busy ? 'Salvando…' : 'Salvar contrato'}
               </button>

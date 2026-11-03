@@ -67,7 +67,7 @@ export class ContractRepository {
       ).rows;
     return (
       await this.db.query(
-        "SELECT p.id,p.title AS name,p.owner_id,u.name AS owner_name FROM properties p JOIN users u ON u.id=p.owner_id WHERE p.status='available' AND u.active AND (p.title ILIKE $1 OR p.city ILIKE $1 OR p.neighborhood ILIKE $1 OR p.street ILIKE $1) ORDER BY p.title,p.id LIMIT 50",
+        "SELECT p.id,p.title AS name,p.rent,p.owner_id,u.name AS owner_name FROM properties p JOIN users u ON u.id=p.owner_id WHERE p.status='available' AND u.active AND (p.title ILIKE $1 OR p.city ILIKE $1 OR p.neighborhood ILIKE $1 OR p.street ILIKE $1) ORDER BY p.title,p.id LIMIT 50",
         [`%${search}%`],
       )
     ).rows;

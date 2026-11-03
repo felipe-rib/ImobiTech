@@ -85,6 +85,16 @@ Esta extensão foi solicitada depois do DRS/Arquitetura 2.1 e não é apresentad
 
 Esta melhoria de usabilidade foi solicitada após a matriz original.
 
+## Condições anuais e desconto na criação do contrato
+
+| Caso | Cenário | Evidência | Resultado |
+|---|---|---|---|
+| LOC-01 | Seleção de imóvel preenche o aluguel cadastrado no formulário | `backend/test/rental.test.ts`; [verificação no Chrome](evidence/mvp/annual-contract-ui.txt) | Aprovado |
+| LOC-02 | Início em 03/11/2026 calcula término em 02/11/2027 | [Verificação no Chrome](evidence/mvp/annual-contract-ui.txt) | Aprovado |
+| LOC-03 | Aluguel de R$ 5.300 e desconto opcional de R$ 300 resultam em valor mensal de R$ 5.000; desconto integral é bloqueado | [Verificação no Chrome](evidence/mvp/annual-contract-ui.txt) | Aprovado |
+
+O valor mensal líquido é salvo no contrato. O desconto informado na criação não possui campo próprio no banco de dados.
+
 ## Reprodução
 
 Os testes de backend usam schemas temporários em banco de teste separado e dados fictícios. A suíte atual teve **27/27 aprovações no Docker**; o [log Docker anterior](evidence/mvp/backend-docker.txt) registra 25/25 antes das fotos e o [log local](evidence/mvp/backend-tests.txt) corresponde à suíte anterior de 23 testes. Consulte [registro de execuções](evidence/mvp/EXECUCOES.md), [log atual](evidence/mvp/lookup-docker.txt) e [guia do professor](../GUIA_PROFESSOR.md). Execute `npm.cmd test` com `TEST_DATABASE_URL` terminando em `_test`. O guia traz os comandos Docker para build, migrations e interface. Evidências em `docs/evidence/` fora de `mvp/` pertencem à v0.1.

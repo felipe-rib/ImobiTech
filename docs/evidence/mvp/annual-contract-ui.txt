@@ -1,0 +1,8 @@
+03/11/2026 — ambiente local Docker imobitech-qa, Chrome headless.
+Build backend e frontend em Docker: aprovado.
+Suíte backend em banco de teste isolado: 27 testes, 27 aprovados, 0 falhas.
+Novo contrato: seleção do imóvel SQN 214 preencheu aluguel de R$ 5.300,00.
+Desconto de R$ 300,00 resultou em valor mensal de R$ 5.000,00.
+Início em 03/11/2026 calculou término em 02/11/2027.
+Desconto igual ao aluguel bloqueou o botão de salvar.
+Nenhum contrato foi criado durante a verificação de interface.

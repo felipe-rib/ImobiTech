@@ -482,6 +482,7 @@ test('Busca de contrato: cadastros elegíveis aparecem sem termo e por e-mail ou
   const properties = await request('GET', '/contracts/options?kind=properties&search=', 'admin');
   assert.equal(properties.statusCode, 200);
   assert.ok(properties.json().some((item: { id: string }) => item.id === propertyId));
+  assert.equal(properties.json().find((item: { id: string }) => item.id === propertyId).rent, '1800.50');
   const byStreet = await request(
     'GET',
     '/contracts/options?kind=properties&search=Rua%20de%20teste',

@@ -5,6 +5,7 @@ export type Option = {
   id: string;
   name: string;
   email?: string;
+  rent?: string | null;
   owner_id?: string;
   owner_name?: string;
 };
